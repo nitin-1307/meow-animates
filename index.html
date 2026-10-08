@@ -1,0 +1,813 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f0eff9">
+  <title>Meow Animates — Frame animation studio</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+    :root{--bg:#f0eff9;--paper:#fff;--ink:#222033;--muted:#79778c;--line:#e6e3f0;--accent:#a48bfa;--accent-dark:#6344c6;--soft:#f0ebff;--sidebar:252px;--radius:11px}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px 'DM Sans',sans-serif;height:100vh;overflow:hidden}button,input,select{font:inherit}button{color:inherit;cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #9aba67;outline-offset:2px}
+    .app{display:grid;grid-template-columns:var(--sidebar) minmax(0,1fr);height:100vh}.sidebar{background:#fbfbf9;border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0;padding:23px 17px 15px}.brand{display:flex;align-items:center;gap:11px;padding:0 8px 24px}.brand-mark{width:35px;height:35px;border-radius:12px;background:#c6dc9e;display:grid;place-items:center;color:#35522e}.brand-mark svg{width:20px}.brand-name{font:800 16px Manrope,sans-serif;letter-spacing:-.6px}.brand-caption{font-size:10px;color:var(--muted);margin-top:1px}.section-label{font:500 10px 'DM Mono',monospace;text-transform:uppercase;letter-spacing:1px;color:#999d95;margin:5px 9px 9px}.projects-list{display:grid;gap:4px}.project-row{display:flex;align-items:center;gap:10px;border:0;background:transparent;border-radius:9px;padding:9px 10px;text-align:left;font-size:12px;width:100%;color:#555a53}.project-row:hover{background:#f1f2ed}.project-row.active{background:var(--soft);color:#334c28;font-weight:600}.project-dot{width:8px;height:8px;border-radius:3px;background:#b8cd92;flex:none}.project-row:nth-child(3n) .project-dot{background:#e4bb9e}.project-row:nth-child(3n + 1) .project-dot{background:#b2c8df}.project-row .row-count{margin-left:auto;font:10px 'DM Mono',monospace;color:#999}.side-actions{margin:10px 3px 20px;display:grid;grid-template-columns:1fr 1fr;gap:6px}.small-action{border:1px solid var(--line);background:white;border-radius:8px;padding:8px 4px;font-size:11px;color:#60655d}.small-action:hover{border-color:#c8d4b6}.sidebar-spacer{flex:1}.side-tip{padding:13px;background:#f3f4ef;border:1px solid #ebede6;border-radius:10px;font-size:11px;line-height:1.55;color:#75796f}.side-tip strong{display:block;color:#3c4338;font-size:11px;margin-bottom:3px}.profile{border-top:1px solid var(--line);padding:14px 5px 0;margin-top:16px;display:flex;align-items:center;gap:9px}.avatar{width:29px;height:29px;background:#e4e9dc;border-radius:50%;display:grid;place-items:center;font-size:11px;color:#526348}.profile-name{font-size:11px;font-weight:600}.profile-plan{font-size:10px;color:var(--muted);margin-top:2px}
+    .main{display:flex;flex-direction:column;min-width:0;min-height:0}.topbar{height:59px;display:flex;align-items:center;justify-content:space-between;padding:0 25px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.72);flex:none}.crumb{color:#8a8d86;font-size:12px}.crumb b{color:#292d28;font-weight:600}.top-actions{display:flex;gap:8px;align-items:center}.status{font:10px 'DM Mono',monospace;color:#888d83;margin-right:5px}.btn{border:1px solid var(--line);background:white;border-radius:8px;padding:8px 12px;font-size:11px;font-weight:600;transition:.15s}.btn:hover{border-color:#b9c7a5;background:#fbfcf8}.btn.primary{background:#282e27;color:white;border-color:#282e27;padding:9px 14px}.btn.primary:hover{background:#444c40}.workspace{display:grid;grid-template-columns:minmax(0,1fr) 254px;gap:16px;padding:17px 19px 16px;min-height:0;flex:1}.editor-column{display:flex;flex-direction:column;min-width:0;gap:11px;min-height:0}.editor-heading{height:29px;display:flex;align-items:center;justify-content:space-between;flex:none}.editor-title{font:700 15px Manrope,sans-serif;letter-spacing:-.3px}.canvas-meta{color:var(--muted);font:10px 'DM Mono',monospace;margin-left:9px}.zoom-tools{display:flex;gap:7px;align-items:center;color:#7f837b;font:10px 'DM Mono',monospace}.icon-btn{border:1px solid var(--line);background:white;border-radius:7px;width:27px;height:26px;display:grid;place-items:center;font-size:15px}.stage{flex:1;min-height:230px;border:1px solid #e7e8e3;border-radius:13px;background:#eff0ed;position:relative;overflow:hidden;display:grid;place-items:center;background-image:radial-gradient(#dbddd7 .8px,transparent .8px);background-size:18px 18px}.canvas-wrap{position:relative;width:min(100%,850px);height:min(100%,500px);aspect-ratio:16/9;background:white;box-shadow:0 7px 28px #3332;border-radius:3px;overflow:hidden}    .canvas-wrap canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}.canvas-wrap #artCanvas{z-index:1}.canvas-wrap #onionCanvas{z-index:2;pointer-events:none}.canvas-wrap #drawCanvas{z-index:3}.stage-label{position:absolute;bottom:11px;left:13px;font:9px 'DM Mono',monospace;color:#898d84;background:#fffbd;padding:5px 8px;border-radius:5px}.stage-actions{position:absolute;right:12px;top:12px;display:flex;gap:5px}.stage-actions .icon-btn{width:30px;height:30px;background:#ffffffdf}
+    .toolbar{height:48px;border:1px solid var(--line);border-radius:10px;background:white;display:flex;align-items:center;padding:0 8px;gap:4px;flex:none;overflow-x:auto}.tool{position:relative;border:0;background:transparent;border-radius:7px;width:33px;height:32px;display:grid;place-items:center;color:#686d64;flex:none}.tool:hover{background:#f3f4f0}.tool.active{background:#eaf1e1;color:#476334}.tool svg{width:17px;height:17px;stroke:currentColor}.tool-tip{position:absolute;visibility:hidden;opacity:0;bottom:39px;background:#242821;color:white;border-radius:5px;font-size:10px;padding:5px 7px;white-space:nowrap;z-index:6;pointer-events:none}.tool:hover .tool-tip{visibility:visible;opacity:1}.tool-sep{height:23px;width:1px;background:var(--line);margin:0 5px;flex:none}.color-swatch{width:21px;height:21px;border:2px solid #fff;outline:1px solid #d9dad4;border-radius:50%;overflow:hidden;position:relative;flex:none}.color-swatch input{position:absolute;inset:-5px;width:32px;height:32px;border:0;padding:0;cursor:pointer}.tool-select{height:29px;border:1px solid transparent;background:transparent;border-radius:6px;padding:0 6px;color:#575c54;font-size:10px;max-width:90px}.tool-select:hover{background:#f4f5f1}.size-slider{width:74px;accent-color:#86a85a}.timeline{height:160px;border:1px solid var(--line);border-radius:11px;background:white;display:flex;flex-direction:column;flex:none;min-height:0}.timeline-head{height:38px;border-bottom:1px solid #f0f0ed;display:flex;align-items:center;justify-content:space-between;padding:0 11px;flex:none}.timeline-title{font-size:11px;font-weight:700}.timeline-controls{display:flex;align-items:center;gap:5px}.timeline-controls button{border:1px solid var(--line);background:white;width:25px;height:24px;border-radius:6px;font-size:14px}.timeline-controls button:hover{background:#f5f7f1}.fps-control{font:10px 'DM Mono',monospace;color:#777;margin-left:7px}.fps-control input{width:36px;border:1px solid var(--line);border-radius:5px;padding:4px;margin-left:4px;font:10px 'DM Mono',monospace}.frame-track{display:flex;gap:9px;align-items:center;overflow-x:auto;padding:10px 12px;flex:1}.frame-card{width:92px;flex:none;cursor:pointer}.frame-thumb{height:69px;border:1px solid #e8e9e5;border-radius:7px;background:#f8f8f6;overflow:hidden;position:relative}.frame-thumb canvas{width:100%;height:100%;display:block}.frame-card.selected .frame-thumb{border:2px solid #94b773;box-shadow:0 0 0 2px #e7f0dc}.frame-number{position:absolute;top:4px;left:5px;padding:2px 4px;background:#ffffffc9;border-radius:3px;font:9px 'DM Mono',monospace;color:#777}.frame-duration{font:9px 'DM Mono',monospace;color:#92968f;text-align:center;padding-top:4px}.add-frame{width:36px;height:36px;flex:none;border:1px dashed #c8cbc2;border-radius:8px;background:#fafbf8;color:#868a81;font-size:19px}.add-frame:hover{border-color:#93ac75;color:#527533;background:#f4f7ef}
+    .inspector{background:white;border:1px solid var(--line);border-radius:11px;overflow-y:auto;min-height:0}.inspector-head{padding:14px 14px 11px;border-bottom:1px solid #f0f0ed}.inspector-title{font:700 12px Manrope,sans-serif}.inspector-sub{font-size:10px;color:#949890;margin-top:3px}.panel{padding:12px 13px;border-bottom:1px solid #f0f0ed}.panel-heading{display:flex;justify-content:space-between;align-items:center;font-size:10px;font-weight:700;margin-bottom:10px}.panel-heading span:last-child{font-size:10px;font-weight:400;color:#91958c}.control-label{display:block;font-size:10px;color:#74796f;margin:9px 0 5px}.control-row{display:flex;align-items:center;gap:7px}.control-row input[type=range]{width:100%;accent-color:#87a95b}.value{font:9px 'DM Mono',monospace;color:#848980;min-width:28px;text-align:right}.toggle-row{display:flex;align-items:center;justify-content:space-between;font-size:10px;color:#565b53;margin:9px 0}.switch{width:31px;height:17px;position:relative;display:inline-block}.switch input{opacity:0;width:0;height:0}.switch span{position:absolute;inset:0;background:#d9dbd4;border-radius:20px;transition:.2s;cursor:pointer}.switch span:before{content:"";position:absolute;width:11px;height:11px;left:3px;top:3px;background:white;border-radius:50%;transition:.2s}.switch input:checked+span{background:#8cad65}.switch input:checked+span:before{transform:translateX(14px)}.select-control{width:100%;height:30px;border:1px solid var(--line);border-radius:7px;background:white;color:#4f544c;padding:0 8px;font-size:10px}.color-palette{display:flex;gap:7px;align-items:center;margin-top:8px}.palette-dot{width:18px;height:18px;border:1px solid #00000010;border-radius:50%;cursor:pointer}.palette-dot:hover{transform:scale(1.12)}.inspector .btn{width:100%;padding:8px;font-size:10px}.layer-item{display:flex;align-items:center;gap:7px;padding:6px 7px;border:1px solid #eff0ec;border-radius:6px;margin-top:5px;font-size:10px;color:#60655d}.layer-icon{color:#9aa093}
+    .toast{position:fixed;bottom:18px;left:50%;transform:translate(-50%,15px);opacity:0;pointer-events:none;padding:10px 15px;border-radius:8px;background:#272c25;color:white;font-size:12px;box-shadow:0 4px 20px #0002;transition:.22s;z-index:15}.toast.show{opacity:1;transform:translate(-50%,0)}.modal-backdrop{position:fixed;inset:0;background:#20241e66;display:none;place-items:center;z-index:10;padding:20px}.modal-backdrop.open{display:grid}.modal{background:white;border-radius:13px;width:min(420px,100%);padding:21px;box-shadow:0 18px 70px #0003}.modal h2{font:700 17px Manrope,sans-serif;margin:0 0 5px}.modal p{font-size:11px;color:#81867d;margin:0 0 16px;line-height:1.5}.modal input{width:100%;padding:10px;border:1px solid var(--line);border-radius:7px;margin-bottom:12px}.modal-actions{display:flex;justify-content:flex-end;gap:7px}.modal-projects{display:grid;gap:7px;max-height:220px;overflow:auto;margin:0 0 15px}.project-choice{display:flex;align-items:center;gap:8px;padding:9px;border:1px solid var(--line);border-radius:7px;font-size:11px}.project-choice input{width:auto;margin:0;accent-color:#78964f}.empty-projects{padding:12px;color:#888;font-size:11px}
+    @media(max-width:1060px){:root{--sidebar:205px}.workspace{grid-template-columns:minmax(0,1fr) 220px;gap:11px;padding:13px}.sidebar{padding:17px 12px}.topbar{padding:0 16px}.canvas-wrap{width:min(100%,760px)}}@media(max-width:790px){body{overflow:auto;height:auto;min-height:100vh}.app{height:auto;min-height:100vh;grid-template-columns:1fr}.sidebar{display:none}.main{min-height:100vh}.topbar{height:52px}.top-actions .status{display:none}.workspace{grid-template-columns:1fr;padding:10px;flex:none}.editor-column{height:calc(100vh - 85px);min-height:510px}.inspector{display:grid;grid-template-columns:1fr 1fr;max-height:230px}.inspector-head{grid-column:1/-1}.stage{min-height:210px}.timeline{height:143px}.frame-thumb{height:57px}.frame-card{width:78px}.canvas-wrap{width:min(100%,760px);height:auto;aspect-ratio:16/9}}@media(max-width:480px){.topbar{padding:0 10px}.btn{padding:7px 8px;font-size:10px}.workspace{padding:8px;gap:9px}.editor-column{gap:8px}.editor-heading{height:25px}.editor-title{font-size:13px}.canvas-meta{font-size:9px}.inspector{grid-template-columns:1fr;max-height:245px}.inspector-head{grid-column:auto}.toolbar{height:43px}.stage{min-height:190px}.timeline{height:139px}}
+    .app{display:none}.app.authenticated{display:grid}.sidebar{background:#f8f7fc;border-color:#e4e0f0}.brand-mark{background:#e6defe;color:#6344c6}.project-row.active{background:#eee9fd;color:#553ab0}.project-dot{background:#b8a6ef}.stage{background-color:#eeedf3;background-image:radial-gradient(#d8d4e4 .8px,transparent .8px)}.btn.primary{background:#6344c6;border-color:#6344c6}.btn.primary:hover{background:#5035a8}.tool.active{background:#eee9fd;color:#5c41b9}.size-slider,.control-row input[type=range]{accent-color:#8062df}.switch input:checked+span{background:#8569df}.frame-card.selected .frame-thumb{border-color:#896de1;box-shadow:0 0 0 2px #eee9fd}.add-frame:hover{border-color:#8569df;color:#6344c6;background:#f6f3ff}.small-action:hover{border-color:#c7b9ed}.project-row:hover{background:#f0eef6}.stage-label{background:#ffffffd9}.side-tip{background:#f2effa;border-color:#e6e0f3}
+    .login-page{min-height:100vh;background:#101019;color:#f6f2ed;display:grid;grid-template-columns:minmax(390px,.95fr) 1.05fr;overflow:auto;font-family:'DM Sans',sans-serif}.login-form-side{display:flex;flex-direction:column;justify-content:center;padding:clamp(30px,7vw,92px);position:relative;z-index:2}.login-brand{display:flex;align-items:center;gap:10px;position:absolute;left:clamp(26px,5vw,64px);top:34px;font:800 15px Manrope,sans-serif;letter-spacing:-.5px}.login-logo{width:31px;height:31px;border-radius:10px;background:#c7f36c;color:#182113;display:grid;place-items:center;font-size:16px}.login-content{width:min(100%,382px);margin:42px auto 22px}.login-eyebrow{display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border:1px solid #383449;border-radius:30px;color:#c7f36c;font:10px 'DM Mono',monospace;letter-spacing:.7px;text-transform:uppercase}.login-eyebrow:before{content:"";width:6px;height:6px;background:#c7f36c;border-radius:50%;box-shadow:0 0 10px #c7f36c}.login-content h1{font:700 clamp(34px,4vw,44px)/1.08 Manrope,sans-serif;letter-spacing:-2px;margin:23px 0 10px}.login-content h1 em{font-style:normal;color:#c7f36c}.login-subtitle{font-size:13px;line-height:1.65;color:#a8a4b3;margin:0 0 24px;max-width:340px}.social-login{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.social-button{height:42px;border:1px solid #373543;border-radius:9px;background:#191821;color:#f4f1ef;display:flex;align-items:center;justify-content:center;gap:8px;font-size:11px;font-weight:600;transition:.18s}.social-button:hover{border-color:#8880a1;background:#22202d;transform:translateY(-1px)}.social-button svg{width:15px;height:15px}.login-divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:#797583;font-size:10px}.login-divider:before,.login-divider:after{content:"";height:1px;background:#34323e;flex:1}.auth-field{display:block;margin-bottom:13px}.auth-field span{display:block;margin-bottom:6px;color:#d2ceda;font-size:11px;font-weight:600}.auth-field input{width:100%;height:43px;border:1px solid #373543;border-radius:9px;padding:0 12px;background:#191821;color:#f7f5f2;font:12px 'DM Sans',sans-serif}.auth-field input::placeholder{color:#797583}.auth-field input:focus{border-color:#a48bfa;outline:2px solid #a48bfa30}.auth-meta{display:flex;justify-content:space-between;align-items:center;margin:-2px 0 13px;font-size:10px;color:#aaa6b2}.auth-link{color:#c7f36c;background:none;border:0;padding:0;font-size:10px}.auth-link:hover{text-decoration:underline}.login-submit{height:44px;width:100%;border:0;border-radius:9px;background:#c7f36c;color:#1a2014;font-weight:700;font-size:12px;transition:.18s}.login-submit:hover{background:#d4ff7e;transform:translateY(-1px)}.login-submit:disabled,.social-button:disabled{opacity:.55;cursor:wait;transform:none}.auth-switch{text-align:center;color:#9995a4;font-size:11px;margin:17px 0 0}.auth-switch button{margin-left:4px}.login-message{display:none;margin:0 0 12px;padding:10px 11px;border-radius:8px;font-size:11px;line-height:1.5}.login-message.visible{display:block}.login-message.error{background:#381f2b;color:#ffb9bf;border:1px solid #60303d}.login-message.success{background:#202c20;color:#d6f8ac;border:1px solid #364c30}.login-message.info{background:#211e31;color:#d8ceff;border:1px solid #3c3556}.login-legal{position:absolute;bottom:21px;left:clamp(26px,5vw,64px);font-size:9px;color:#716d7c}.login-art-side{position:relative;min-height:100vh;overflow:hidden;background:#c7f36c;color:#172018;display:flex;align-items:center;justify-content:center;padding:50px}.login-art-side:before{content:"";position:absolute;width:560px;height:560px;border:1px solid #17201820;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 65px #17201808,0 0 0 130px #17201806}.art-grid{position:absolute;inset:0;opacity:.2;background-image:linear-gradient(#28362725 1px,transparent 1px),linear-gradient(90deg,#28362725 1px,transparent 1px);background-size:40px 40px;mask-image:linear-gradient(120deg,#000,transparent 78%)}.art-copy{position:absolute;left:clamp(30px,6vw,82px);top:clamp(48px,10vh,100px);z-index:1}.art-kicker{font:10px 'DM Mono',monospace;text-transform:uppercase;letter-spacing:1.5px;opacity:.65}.art-copy h2{font:700 clamp(29px,3.2vw,44px)/1.12 Manrope,sans-serif;letter-spacing:-1.8px;margin:13px 0 8px;max-width:450px}.art-copy p{margin:0;font-size:12px;opacity:.65}.art-canvas-card{position:relative;width:min(90%,520px);aspect-ratio:1.16;transform:rotate(-4deg);border-radius:22px;background:#f5f0e6;box-shadow:0 24px 55px #17201838,0 0 0 9px #efffa5aa;z-index:1;overflow:hidden}.art-canvas-card svg{width:100%;height:100%;display:block}.art-floating{position:absolute;z-index:2;border-radius:13px;background:#fffdf6;padding:11px 14px;box-shadow:0 9px 25px #1720182b;font-size:10px;font-weight:700}.art-floating span{display:block;margin-top:3px;font:9px 'DM Mono',monospace;color:#838676;font-weight:400}.float-one{left:12%;bottom:22%;transform:rotate(-5deg)}.float-two{right:10%;bottom:32%;transform:rotate(4deg)}
+    .login-page[hidden]{display:none!important}.login-message.info{background:#211e31;color:#d8ceff;border:1px solid #3c3556}.art-canvas-card{transform:translateY(35px) rotate(-4deg)}body:has(.login-page:not([hidden])){height:auto;min-height:100vh;overflow:auto}body:has(.login-page:not([hidden])) .app{display:none!important}
+    .grading-controls{padding-top:1px}.grade-reset{font-size:9px}.effect-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.effect-chip{min-width:0;padding:7px 5px;border:1px solid var(--line);border-radius:7px;background:#fff;color:#636273;text-align:left;font-size:9px;white-space:nowrap}.effect-chip:hover{border-color:#b7a5e7}.effect-chip[aria-pressed=true]{background:#f0ebff;border-color:#a892e0;color:#553ab0;font-weight:600}
+    .login-brand{gap:11px}.login-logo{width:62px;height:62px;background:transparent;border-radius:0;display:block;object-fit:contain}.login-brand-name{font:800 16px Manrope,sans-serif;letter-spacing:-.5px;color:#fff8f0}
+    .brand{gap:8px}.brand-mark{width:58px;height:58px;flex:none;background:transparent;border-radius:0;display:block;object-fit:contain}.brand-name{text-transform:lowercase}
+    .login-eyebrow,.login-content h1 em,.auth-link{color:#ffc45b}.login-eyebrow:before{background:#ffc45b;box-shadow:0 0 10px #ffc45b}.login-submit{background:#ffc45b;color:#261b12}.login-submit:hover{background:#ffd27a}.login-art-side{background:#ffd27a}
+    .sidebar{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='78' height='78' viewBox='0 0 78 78'%3E%3Cg fill='%23a48bfa' fill-opacity='.10'%3E%3Cellipse cx='39' cy='48' rx='10' ry='8'/%3E%3Cellipse cx='24' cy='34' rx='4.2' ry='6' transform='rotate(-28 24 34)'/%3E%3Cellipse cx='34' cy='27' rx='4.2' ry='6' transform='rotate(-9 34 27)'/%3E%3Cellipse cx='45' cy='27' rx='4.2' ry='6' transform='rotate(9 45 27)'/%3E%3Cellipse cx='55' cy='34' rx='4.2' ry='6' transform='rotate(28 55 34)'/%3E%3C/g%3E%3C/svg%3E"),linear-gradient(#f8f7fc,#f8f7fc);background-position:top 160px right 15px,0 0;background-repeat:repeat,no-repeat}
+    .login-art-side:after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.22;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='92' height='92' viewBox='0 0 78 78'%3E%3Cg fill='%236344c6' fill-opacity='.42'%3E%3Cellipse cx='39' cy='48' rx='10' ry='8'/%3E%3Cellipse cx='24' cy='34' rx='4.2' ry='6' transform='rotate(-28 24 34)'/%3E%3Cellipse cx='34' cy='27' rx='4.2' ry='6' transform='rotate(-9 34 27)'/%3E%3Cellipse cx='45' cy='27' rx='4.2' ry='6' transform='rotate(9 45 27)'/%3E%3Cellipse cx='55' cy='34' rx='4.2' ry='6' transform='rotate(28 55 34)'/%3E%3C/g%3E%3C/svg%3E");background-position:24px 18px}
+    .stage:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.10;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='88' height='88' viewBox='0 0 78 78'%3E%3Cg fill='%236344c6'%3E%3Cellipse cx='39' cy='48' rx='10' ry='8'/%3E%3Cellipse cx='24' cy='34' rx='4.2' ry='6' transform='rotate(-28 24 34)'/%3E%3Cellipse cx='34' cy='27' rx='4.2' ry='6' transform='rotate(-9 34 27)'/%3E%3Cellipse cx='45' cy='27' rx='4.2' ry='6' transform='rotate(9 45 27)'/%3E%3Cellipse cx='55' cy='34' rx='4.2' ry='6' transform='rotate(28 55 34)'/%3E%3C/g%3E%3C/svg%3E");background-position:17px 13px;z-index:0}.canvas-wrap{z-index:1}.stage-label,.stage-actions{z-index:2}
+    @media(max-width:850px){.login-page{grid-template-columns:minmax(0,1fr) minmax(300px,.8fr)}.login-form-side{padding:32px}.login-art-side{padding:25px}.art-copy{left:30px}.login-brand{left:30px}.login-legal{left:30px}}@media(max-width:680px){.login-page{display:block;min-height:100vh;background:#101019}.login-art-side{display:none}.login-form-side{min-height:100vh;padding:65px 23px 50px}.login-brand{left:23px;top:22px}.connect-link{right:23px;top:22px}.login-content{margin:28px auto 0}.login-legal{left:23px;bottom:15px}}
+  </style>
+  <style>
+    #studioApp{--bg:#28292e;--paper:#303137;--ink:#e4e4e9;--muted:#a5a6af;--line:#42434a;--soft:#433923;--accent:#f3b64b;--accent-dark:#c67d24;background:#292a2f;color:var(--ink)}
+    #studioApp .sidebar{background:#222328;border-color:#3c3d43;padding:13px 12px 12px}
+    #studioApp .brand{padding:0 3px 14px;gap:6px}
+    #studioApp .brand-mark{width:43px;height:43px}
+    #studioApp .brand-name{font-size:13px;letter-spacing:-.3px;color:#f4f1e9}
+    #studioApp .brand-caption,#studioApp .section-label{color:#a6a7b0}
+    #studioApp .section-label{font-size:9px;margin:8px 7px}
+    #studioApp .project-row{color:#d0d0d5;padding:7px 8px;font-size:11px}
+    #studioApp .project-row:hover{background:#303137}
+    #studioApp .project-row.active{background:#48371e;color:#ffd27a}
+    #studioApp .project-row .row-count{color:#a4a5ad}
+    #studioApp .small-action,#studioApp .btn,#studioApp .icon-btn{background:#34353b;color:#e4e4e9;border-color:#4a4b52;border-radius:5px}
+    #studioApp .small-action{font-size:10px}
+    #studioApp .small-action:hover,#studioApp .btn:hover,#studioApp .icon-btn:hover{background:#414249;border-color:#777982}
+    #studioApp .btn.primary{background:#d98d32;color:#211a12;border-color:#d98d32}
+    #studioApp .main{background:#2b2c31}
+    #studioApp .topbar{height:42px;padding:0 10px;justify-content:flex-start;gap:14px;background:#202126;border-color:#414249;color:#dedee3}
+    #studioApp .app-menus{display:flex;align-items:center;gap:2px;flex:none}
+    #studioApp .menu-dropdown{position:relative}
+    #studioApp .menu-dropdown summary{list-style:none;cursor:pointer;padding:6px 8px;border-radius:4px;font-size:11px;color:#dadbe0}
+    #studioApp .menu-dropdown summary::-webkit-details-marker{display:none}
+    #studioApp .menu-dropdown[open] summary,#studioApp .menu-dropdown summary:hover{background:#3b3c42;color:white}
+    #studioApp .menu-list{position:absolute;left:0;top:calc(100% + 3px);z-index:30;min-width:205px;padding:5px;background:#303137;border:1px solid #51525a;border-radius:6px;box-shadow:0 12px 28px #0008}
+    #studioApp .menu-list button{width:100%;display:flex;justify-content:space-between;gap:22px;padding:7px 9px;border:0;border-radius:4px;background:transparent;color:#e5e5e8;text-align:left;font-size:11px}
+    #studioApp .menu-list button:hover{background:#494a51}
+    #studioApp .menu-list kbd{color:#a9aab2;font:10px 'DM Mono',monospace}
+    #studioApp .crumb{min-width:0;flex:1;color:#aeb0b8;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    #studioApp .crumb b{color:#f2f2f4;font-weight:600}
+    #studioApp .top-actions{gap:5px;flex:none}
+    #studioApp .top-actions .btn{padding:6px 9px;font-size:10px}
+    #studioApp .status{color:#b8bac2;font-size:9px}
+    #studioApp .workspace{grid-template-columns:minmax(0,1fr) 275px;gap:0;padding:0;min-height:0}
+    #studioApp .editor-column{display:grid;grid-template-columns:43px minmax(0,1fr);grid-template-rows:33px 38px minmax(145px,1fr) 190px;gap:0;overflow:hidden}
+    #studioApp .editor-heading{grid-column:1/-1;grid-row:1;height:33px;padding:0 10px;background:#303137;border-bottom:1px solid #45464d}
+    #studioApp .editor-title{font:600 11px 'DM Sans',sans-serif;color:#e4e4e8}
+    #studioApp .canvas-meta{font:9px 'DM Mono',monospace;color:#aaaab2}
+    #studioApp .zoom-tools{color:#b8bac2;font-size:9px}
+    #studioApp .zoom-tools .icon-btn{width:24px;height:22px}
+    #studioApp .tool-dock{grid-column:1;grid-row:2/4;display:flex;flex-direction:column;align-items:center;min-height:0;background:#24252a;border-right:1px solid #44454c;z-index:2}
+    #studioApp .toolbar{width:100%;height:auto;min-height:0;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:2px;padding:6px 3px;border:0;border-radius:0;background:transparent;overflow-x:hidden;overflow-y:auto}
+    #studioApp .tool{width:34px;height:32px;color:#c6c7ce;border-radius:4px;font-size:15px}
+    #studioApp .tool:hover{background:#3b3c42}
+    #studioApp .tool.active{background:#59431f;color:#ffd27a;box-shadow:inset 2px 0 #f3b64b}
+    #studioApp .tool-tip{left:39px;bottom:auto;top:50%;transform:translateY(-50%);visibility:hidden;opacity:0}
+    #studioApp .tool:hover .tool-tip{visibility:visible;opacity:1}
+    #studioApp .tool-dock-label{padding:5px 0 7px;color:#888a94;font:8px 'DM Mono',monospace;letter-spacing:.6px}
+    #studioApp .tool-options{grid-column:2;grid-row:2;display:flex;align-items:center;gap:7px;min-width:0;padding:0 9px;background:#33343a;border-bottom:1px solid #484950;overflow-x:auto}
+    #studioApp .tool-options .tool-sep{height:21px;background:#55565e;margin:0 2px}
+    #studioApp .tool-options .size-slider{width:80px;accent-color:#f3b64b}
+    #studioApp .tool-options .palette-dot{cursor:pointer}
+    #studioApp .tool-options .tool-select{color:#e1e1e5;border:1px solid #505159;max-width:95px}
+    #studioApp .tool-options .tool-select option{background:#303137;color:#eee}
+    #studioApp .color-swatch{outline-color:#777982}
+    #studioApp .stage{grid-column:2;grid-row:3;min-height:0;border:0;border-radius:0;background-color:#24252a;background-image:radial-gradient(#46474d .7px,transparent .7px);background-size:18px 18px}
+    #studioApp .stage:before{opacity:.035}
+    #studioApp .canvas-wrap{width:min(92%,1000px);height:auto;max-height:90%;aspect-ratio:16/9;border-radius:1px;box-shadow:0 6px 22px #0008}
+    #studioApp .stage-label{bottom:8px;left:9px;background:#222328d9;color:#d2d2d8;border:1px solid #4e4f56}
+    #studioApp .stage-actions{top:8px;right:9px}
+    #studioApp .stage-actions .icon-btn{background:#2b2c31e8}
+    #studioApp .timeline{grid-column:1/-1;grid-row:4;width:100%;height:190px;border:0;border-top:1px solid #4a4b52;border-radius:0;background:#292a2f}
+    #studioApp .timeline-head{height:36px;background:#303137;border-bottom:1px solid #45464d;color:#e1e1e6;padding:0 8px}
+    #studioApp .timeline-title{display:flex;align-items:center;gap:9px;font-size:10px}
+    #studioApp .timeline-tab{padding:6px 10px;border-bottom:2px solid #f3b64b}
+    #studioApp .timeline-scene{color:#b5b6be;font-size:9px;font-weight:400}
+    #studioApp #frameCount{color:#b5b6be!important}
+    #studioApp .timeline-controls{gap:4px}
+    #studioApp .timeline-controls button{width:24px;height:23px;border:1px solid #4b4c53;border-radius:4px;background:#38393f;color:#dedee3}
+    #studioApp .timeline-controls button:hover{background:#4a4b52}
+    #studioApp .timeline-controls #playBtn{color:#ffd27a}
+    #studioApp .fps-control{color:#c0c1c8;font-size:9px}
+    #studioApp .fps-control input{background:#24252a;color:#eee;border-color:#51525a}
+    #studioApp .timeline-layer{height:27px;display:grid;grid-template-columns:22px 24px 115px minmax(0,1fr);align-items:center;flex:none;background:#34353b;border-bottom:1px solid #484950;color:#d7d8de;font-size:9px}
+    #studioApp .layer-twist{text-align:center;color:#b7b8c0}
+    #studioApp .layer-mini-icon{text-align:center;color:#f3b64b}
+    #studioApp .layer-track-name{height:100%;display:flex;align-items:center;padding-left:7px;border-right:1px solid #505159}
+    #studioApp .layer-track-cells{height:100%;display:grid;grid-auto-flow:column;grid-auto-columns:101px;align-items:center;gap:0;padding-left:8px;overflow:hidden}
+    #studioApp .layer-exposure{height:12px;border:1px solid #ad762e;border-radius:2px;background:#69491f;position:relative;padding:0;cursor:pointer}
+    #studioApp .layer-exposure:before{content:"";position:absolute;left:0;top:1px;width:7px;height:7px;border-radius:50%;background:#f5bf59}
+    #studioApp .layer-exposure.selected{background:#8b5f26;border-color:#ffd27a}
+    #studioApp .frame-track{min-height:0;align-items:flex-start;gap:9px;padding:8px 12px 4px 162px;background:#28292e;scrollbar-color:#55565d #2a2b30}
+    #studioApp .frame-card{width:92px}
+    #studioApp .frame-thumb{height:60px;border-color:#52535a;border-radius:3px;background:#38393f}
+    #studioApp .frame-card.selected .frame-thumb{border:2px solid #f3b64b;box-shadow:0 0 0 1px #f3b64b55}
+    #studioApp .frame-duration{color:#b8bac2}
+    #studioApp .add-frame{width:28px;height:28px;border-radius:4px;border-color:#666770;background:#34353b;color:#f2c268}
+    #studioApp .inspector{background:#292a2f;border:0;border-left:1px solid #45464d;border-radius:0;color:#e3e3e8}
+    #studioApp .inspector-head{padding:11px 12px 9px;background:#303137;border-bottom:1px solid #47484f}
+    #studioApp .inspector-title{color:#f1f1f4}
+    #studioApp .inspector-sub{color:#aaaab3}
+    #studioApp .panel{padding:10px 11px;background:#292a2f;border-color:#42434a}
+    #studioApp .panel-heading{color:#e5e5ea}
+    #studioApp .panel-heading span,#studioApp .control-label,#studioApp .value{color:#afb0b8}
+    #studioApp .select-control,#studioApp .inspector input[type=number]{background:#35363c;color:#e3e3e8;border-color:#51525a}
+    #studioApp .control-row input[type=range]{accent-color:#f3b64b}
+    #studioApp .layer-item{background:#33343a;color:#dedee3}
+    #studioApp .side-tip{background:#302d28;border-color:#514331;color:#c8c3ba}
+    #studioApp .side-tip strong{color:#f3ca7e}
+    #studioApp .profile{border-color:#414249}
+    #studioApp .avatar{background:#51412b;color:#ffda8d}
+    #studioApp .profile-plan{color:#aaaab3}
+    @media(max-width:1100px){#studioApp{--sidebar:190px}#studioApp .workspace{grid-template-columns:minmax(0,1fr) 245px}}
+    @media(max-width:850px){body:has(#studioApp.authenticated){height:100vh;overflow:hidden}#studioApp.authenticated{height:100vh;min-height:0;grid-template-columns:minmax(0,1fr)}#studioApp .sidebar{display:none}#studioApp .main{height:100vh;min-height:0}#studioApp .workspace{height:calc(100vh - 42px);grid-template-columns:minmax(0,1fr) 230px;flex:1;min-height:0}#studioApp .inspector{display:block;height:100%;min-height:0;max-height:none;overflow-y:auto}#studioApp .topbar{gap:6px;padding:0 6px}#studioApp .top-actions .status{display:none}#studioApp .app-menus .menu-dropdown summary{padding:6px 5px}}
+    @media(max-width:680px){#studioApp{height:auto;min-height:100vh}#studioApp .main{min-height:100vh}#studioApp .workspace{grid-template-columns:1fr;grid-template-rows:minmax(540px,1fr) 240px;padding:0}#studioApp .editor-column{grid-row:1;grid-template-rows:33px 38px minmax(160px,1fr) 175px}#studioApp .inspector{grid-row:2;display:grid;grid-template-columns:1fr 1fr;max-height:none;overflow:auto}#studioApp .inspector-head{grid-column:1/-1}#studioApp .timeline{height:175px}#studioApp .app-menus .menu-dropdown:nth-child(n+3){display:none}#studioApp .topbar{height:auto;min-height:42px;flex-wrap:wrap;padding:4px 7px}#studioApp .crumb{order:3;flex-basis:100%;padding:0 5px 4px}#studioApp .frame-track{padding-left:158px}}
+    #studioApp .workspace{gap:0;padding:0}
+    #studioApp .editor-column{gap:0}
+    #studioApp .editor-heading{padding:0 12px}
+    #studioApp .stage{background-size:24px 24px}
+    #studioApp .canvas-wrap{box-shadow:0 3px 14px #0006}
+    #studioApp .canvas-wrap::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;background:radial-gradient(ellipse at center,transparent 48%,rgba(0,0,0,var(--vignette-opacity,0)) 100%)}
+    #studioApp .inspector{box-shadow:-4px 0 14px #0002}
+    #studioApp .inspector-head{padding:10px 12px}
+    #studioApp .panel{padding:0}
+    #studioApp details.panel>summary{display:flex;align-items:center;justify-content:space-between;min-height:36px;padding:8px 11px;cursor:pointer;list-style:none;user-select:none}
+    #studioApp details.panel>summary::-webkit-details-marker{display:none}
+    #studioApp details.panel>summary:after{content:"+";color:#f3b64b;font:14px 'DM Mono',monospace}
+    #studioApp details.panel[open]>summary:after{content:"−"}
+    #studioApp details.panel[open]>summary{border-bottom:1px solid #42434a}
+    #studioApp details.panel[open]>:not(summary){margin-left:11px;margin-right:11px}
+    #studioApp details.panel[open]>.panel-heading:not(summary){margin-top:12px}
+    #studioApp details.panel[open]>.panel-heading:last-child{margin-bottom:10px}
+    #studioApp .inspector .control-row{gap:8px}
+    #studioApp .inspector .control-row .value{min-width:34px}
+    #studioApp .inspector .effect-grid{gap:4px}
+    #studioApp .inspector .effect-chip{padding:6px 7px}
+    #studioApp .animation-help{margin:8px 11px;color:#aeb0b8;font-size:9px;line-height:1.5}
+    #studioApp .animation-control-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;margin:8px 11px}
+    #studioApp .animation-control-grid .control-label{min-width:0;font-size:9px}
+    #studioApp .animation-control-grid input[type=range]{display:block;width:100%;margin:6px 0 9px;accent-color:#f3b64b}
+    #studioApp .animation-value{float:right;color:#e7bd71;font:9px 'DM Mono',monospace}
+    #studioApp .animation-range{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:7px 11px}
+    #studioApp .animation-range .control-label{font-size:9px}
+    #studioApp .animation-range input{display:block;width:100%;margin-top:5px;background:#35363c;color:#e3e3e8;border:1px solid #51525a;border-radius:4px;padding:5px}
+    #studioApp .select-control{margin:4px 11px 8px;width:calc(100% - 22px)}
+    #studioApp .control-label{display:block}
+    #studioApp .timeline-layer{grid-template-columns:20px 22px 92px minmax(0,1fr)}
+    #studioApp .layer-track-cells{grid-auto-columns:101px}
+    #studioApp .frame-track{padding-left:134px}
+    #studioApp .app-menus{gap:0}
+    #studioApp .menu-dropdown summary{padding:6px 7px}
+    #studioApp .topbar{gap:8px}
+    #studioApp .top-actions .btn{min-width:28px}
+    #studioApp .side-tip{padding:10px;font-size:10px}
+    .editor-tooltip{position:fixed;z-index:10000;max-width:230px;padding:6px 9px;border:1px solid #565760;border-radius:5px;background:#1f2025;color:#f4f4f6;font:11px/1.35 'DM Sans',sans-serif;box-shadow:0 5px 16px #0005;pointer-events:none;opacity:0;transform:translateY(3px);transition:opacity .12s ease,transform .12s ease}
+    .editor-tooltip.visible{opacity:1;transform:translateY(0)}
+    @media(max-width:680px){#studioApp .workspace{padding:0}#studioApp .inspector{display:flex;flex-direction:column;gap:0}#studioApp .inspector-head{flex:none}#studioApp details.panel[open]>:not(summary){margin-left:10px;margin-right:10px}}
+  </style>
+</head>
+<body>
+<section class="login-page" id="loginPage">
+  <div class="login-form-side">
+    <div class="login-brand"><img class="login-logo" src="./meow-animates-logo.png" alt="Meow Animates logo"><span class="login-brand-name">Meow Animates</span></div>
+    <div class="login-content">
+      <div class="login-eyebrow">Your studio starts here</div>
+      <h1>Make a little<br><em>magic move.</em></h1>
+      <p class="login-subtitle">A calmer canvas for big ideas. Sign in to open your animation studio and pick up where inspiration left off.</p>
+      <div class="social-login">
+        <button class="social-button" data-provider="google" aria-label="Continue with Google"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.35 12.23c0-.7-.06-1.38-.18-2.03H12v3.84h5.24a4.48 4.48 0 0 1-1.95 2.94v2.4h3.16c1.85-1.7 2.9-4.2 2.9-7.15Z"/><path fill="#34A853" d="M12 21.75c2.64 0 4.85-.88 6.47-2.37l-3.16-2.4c-.88.6-2 .96-3.31.96-2.55 0-4.72-1.72-5.5-4.04H3.23v2.47A9.77 9.77 0 0 0 12 21.75Z"/><path fill="#FBBC05" d="M6.5 13.9a5.87 5.87 0 0 1 0-3.8V7.63H3.23a9.75 9.75 0 0 0 0 8.74L6.5 13.9Z"/><path fill="#EA4335" d="M12 6.06c1.44 0 2.73.5 3.75 1.5l2.81-2.8C16.84 3.15 14.64 2.25 12 2.25a9.77 9.77 0 0 0-8.77 5.38L6.5 10.1c.78-2.32 2.95-4.04 5.5-4.04Z"/></svg>Google</button>
+        <button class="social-button" data-provider="azure" aria-label="Continue with Microsoft"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#f35325" d="M2 2h9v9H2z"/><path fill="#81bc06" d="M13 2h9v9h-9z"/><path fill="#05a6f0" d="M2 13h9v9H2z"/><path fill="#ffba08" d="M13 13h9v9h-9z"/></svg>Microsoft</button>
+      </div>
+      <div class="login-divider">or with email</div>
+      <div class="login-message" id="loginMessage" role="status" aria-live="polite"></div>
+      <form id="authForm">
+        <label class="auth-field"><span>Email address</span><input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com" required></label>
+        <label class="auth-field"><span>Password</span><input id="authPassword" type="password" autocomplete="current-password" minlength="8" placeholder="At least 8 characters" required></label>
+        <div class="auth-meta"><span id="authModeHint">Welcome back</span><button type="button" class="auth-link" id="forgotPasswordBtn">Forgot password?</button></div>
+        <button class="login-submit" id="authSubmit" type="submit">Sign in to your studio <span>↗</span></button>
+      </form>
+      <div class="auth-switch"><span id="authSwitchText">New to Meow Animates?</span><button type="button" class="auth-link" id="authModeToggle">Create an account</button></div>
+    </div>
+    <div class="login-legal">By continuing, you agree to our terms and privacy policy.</div>
+  </div>
+  <div class="login-art-side">
+    <div class="art-grid"></div>
+    <div class="art-copy"><div class="art-kicker">Every frame has a feeling</div><h2>From first sketch<br>to final scene.</h2><p>Your ideas, frame by frame. All in one lovely place.</p></div>
+    <div class="art-canvas-card"><svg viewBox="0 0 560 480" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="A little illustrated sun and landscape"><rect width="560" height="480" fill="#F4F0E6"/><path d="M0 366c83-65 153-27 221-69 66-41 117-25 183-8 57 15 102-17 156-36v227H0V366Z" fill="#D8E4B4"/><path d="M0 411c79-44 154-3 224-35 78-36 135-28 197-5 59 22 95-5 139-22v131H0v-69Z" fill="#B6CE92"/><path d="M351 157c0 49-40 89-89 89s-89-40-89-89 40-89 89-89 89 40 89 89Z" fill="#E9A55F"/><path d="m262 46 1-20m66 52 15-14m26 75 20-3m-30 81 16 13m-85 29 3 20m-81-31-13 16m-27-83-20 2m30-82-16-13" stroke="#E9A55F" stroke-width="8" stroke-linecap="round"/><path d="M249 163c7 0 7 12 0 12s-7-12 0-12Zm26 0c7 0 7 12 0 12s-7-12 0-12Z" fill="#263427"/><path d="M248 192c10 11 24 11 34 0" stroke="#263427" stroke-width="4" stroke-linecap="round"/><path d="M95 333c22-40 54-40 75 0m206-39c22-40 54-40 75 0" stroke="#698558" stroke-width="7" stroke-linecap="round"/><path d="m121 314 10-24m8 26 12-25m217-18 10-24m8 26 12-25" stroke="#698558" stroke-width="5" stroke-linecap="round"/><path d="M113 368h49m222-20h56" stroke="#8BA66D" stroke-width="5" stroke-linecap="round"/></svg></div>
+    <div class="art-floating float-one">✦ Frame 08 <span>Little cloud's journey</span></div>
+    <div class="art-floating float-two">12 fps <span>Looking lovely already</span></div>
+  </div>
+</section>
+<script src="./firebase-config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<div class="app" id="studioApp">
+  <aside class="sidebar">
+    <div class="brand"><img class="brand-mark" src="./meow-animates-logo.png" alt="Meow Animates logo"><div><div class="brand-name">Meow Animates</div><div class="brand-caption">frame animation studio</div></div></div>
+    <div class="section-label">Your workspace</div><div class="projects-list" id="projectsList"></div>
+    <div class="side-actions"><button class="small-action" id="newProjectBtn">＋ New project</button><button class="small-action" id="combineBtn">⊞ Combine</button></div>
+    <div class="section-label">Studio</div>
+    <button class="project-row" id="exportProjectBtn"><span class="project-dot"></span>Export project</button>
+    <button class="project-row" id="importProjectBtn"><span class="project-dot"></span>Import project</button>
+    <div class="sidebar-spacer"></div><div class="side-tip"><strong>A little tip 🐾</strong>Keep onion skin on while sketching to make your movement feel smooth.</div>
+    <div class="profile"><div class="avatar">🐾</div><div><div class="profile-name" id="profile-name">My studio</div><div class="profile-plan">Your creative space</div></div></div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <nav class="app-menus" aria-label="Application menu">
+        <details class="menu-dropdown"><summary>File</summary><div class="menu-list"><button type="button" data-menu-action="newProject">New project <kbd>Ctrl+N</kbd></button><button type="button" data-menu-action="importProject">Import project</button><button type="button" data-menu-action="exportProject">Export project</button><button type="button" data-menu-action="exportVideo">Export video</button></div></details>
+        <details class="menu-dropdown"><summary>Edit</summary><div class="menu-list"><button type="button" data-menu-action="undo">Undo <kbd>Ctrl+Z</kbd></button><button type="button" data-menu-action="redo">Redo <kbd>Ctrl+Y</kbd></button><button type="button" data-menu-action="duplicateFrame">Duplicate frame</button><button type="button" data-menu-action="deleteFrame">Delete frame</button></div></details>
+        <details class="menu-dropdown"><summary>View</summary><div class="menu-list"><button type="button" data-menu-action="toggleOnion">Toggle previous-frame preview</button><button type="button" data-menu-action="zoomOut">Zoom out</button><button type="button" data-menu-action="zoomIn">Zoom in</button><button type="button" data-menu-action="fullscreen">Fullscreen stage</button></div></details>
+        <details class="menu-dropdown"><summary>Control</summary><div class="menu-list"><button type="button" data-menu-action="previousFrame">Previous frame</button><button type="button" data-menu-action="play">Play / stop</button><button type="button" data-menu-action="nextFrame">Next frame</button></div></details>
+      </nav>
+      <div class="crumb">Scene 1 <span style="padding:0 7px;color:#777">/</span><b id="breadcrumbName">Untitled project</b></div>
+      <div class="top-actions"><span class="status" id="accountEmail"></span><span class="status save-indicator" id="saveStatus">All changes saved</span><button class="btn" id="undoBtn" title="Undo">↶</button><button class="btn" id="redoBtn" title="Redo">↷</button><button class="btn primary" id="exportVideoBtn">Export video</button><button class="btn" id="signOutBtn">Sign out</button></div>
+    </header>
+    <section class="workspace">
+      <div class="editor-column">
+        <div class="editor-heading"><div><span class="editor-title">Stage</span><span class="canvas-meta" id="canvasMeta">1920 × 1080 · 12 fps</span></div><div class="zoom-tools"><button class="icon-btn" id="zoomOut" aria-label="Zoom out">−</button><span id="zoomLabel">100%</span><button class="icon-btn" id="zoomIn" aria-label="Zoom in">＋</button><button class="icon-btn" id="fullscreenBtn" aria-label="Fullscreen">⛶</button></div></div>
+        <div class="tool-dock"><div class="toolbar" id="toolbar" aria-label="Drawing tools"></div><div class="tool-dock-label">TOOLS</div></div>
+        <div class="tool-options" id="toolOptions" aria-label="Tool options"></div>
+        <div class="stage" id="stage">
+          <div class="canvas-wrap" id="canvasWrap"><canvas id="artCanvas" width="1920" height="1080"></canvas><canvas id="onionCanvas" width="1920" height="1080"></canvas><canvas id="drawCanvas" width="1920" height="1080"></canvas></div>
+          <div class="stage-label">FRAME <span id="stageFrameNum">01</span></div>
+          <div class="stage-actions"><button class="icon-btn" id="clearFrameBtn" title="Clear frame">⌫</button></div>
+        </div>
+        <section class="timeline">
+          <div class="timeline-head"><div class="timeline-title"><span class="timeline-tab">Timeline</span><span class="timeline-scene">Scene 1 · <span id="frameCount">(1)</span></span></div><div class="timeline-controls"><button id="previousFrame" title="Previous frame" aria-label="Previous frame">‹</button><button id="playBtn" title="Play animation" aria-label="Play animation">▶</button><button id="nextFrame" title="Next frame" aria-label="Next frame">›</button><button id="duplicateFrame" title="Duplicate current frame" aria-label="Duplicate current frame">▣</button><button id="deleteFrame" title="Delete current frame" aria-label="Delete current frame"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6m4-6v6M5 7l1 14h12l1-14M9 7V4h6v3"/></svg></button><span class="fps-control">FPS <input id="fpsInput" type="number" min="1" max="60" value="12"></span></div></div>
+          <div class="timeline-layer"><span class="layer-twist">⌄</span><span class="layer-mini-icon">◉</span><span class="layer-track-name">Drawing</span><span class="layer-track-cells" id="layerTrackCells"></span></div>
+          <div class="frame-track" id="frameTrack"></div>
+        </section>
+      </div>
+      <aside class="inspector">
+        <div class="inspector-head"><div class="inspector-title">Frame properties</div><div class="inspector-sub">Fine-tune your animation</div></div>
+        <div class="panel"><div class="panel-heading">Animation & tweens <span>KEYFRAMES</span></div><div class="animation-help">Applies during playback and video export.</div><label class="control-label">Tween type</label><select class="select-control" id="tweenType"><option value="motion">Motion tween</option><option value="classic">Classic tween</option><option value="shape">Shape blend (raster dissolve)</option><option value="none">No tween</option></select><label class="control-label">Motion preset</label><select class="select-control" id="motionPreset"><option value="custom">Custom</option><optgroup label="Basic"><option value="flyIn">Fly in</option><option value="flyOut">Fly out</option><option value="slideLeft">Slide left</option><option value="slideRight">Slide right</option><option value="slideUp">Slide up</option><option value="slideDown">Slide down</option></optgroup><optgroup label="Bounce & zoom"><option value="bounce">Bounce</option><option value="bounceIn">Bounce in</option><option value="bounceOut">Bounce out</option><option value="zoomIn">Zoom in</option><option value="zoomOut">Zoom out</option><option value="grow">Grow</option><option value="shrink">Shrink</option></optgroup><optgroup label="Rotate & special"><option value="rotateLeft">Rotate left</option><option value="rotateRight">Rotate right</option><option value="spin">Spin</option><option value="pulse">Pulse</option><option value="swing">Swing</option><option value="shake">Shake</option><option value="wobble">Wobble</option><option value="flash">Flash</option><option value="fadeIn">Fade in</option><option value="fadeOut">Fade out</option></optgroup></select><label class="control-label">Easing</label><select class="select-control" id="tweenEase"><option value="linear">Linear</option><option value="easeIn">Ease in · slow to fast</option><option value="easeOut">Ease out · fast to slow</option><option value="easeInOut">Ease in-out</option><option value="quad">Quadratic</option><option value="cubic">Cubic</option><option value="quart">Quartic</option><option value="quint">Quintic / strong</option><option value="circ">Circular</option><option value="back">Back</option><option value="bounce">Bounce</option><option value="elastic">Elastic</option></select><div class="animation-range"><label class="control-label">Start frame <input id="tweenStartFrame" type="number" min="1" value="1"></label><label class="control-label">End frame <input id="tweenEndFrame" type="number" min="1" value="1"></label></div><label class="control-label">Rotation direction</label><select class="select-control" id="rotationDirection"><option value="auto">Auto</option><option value="cw">Clockwise</option><option value="ccw">Counter clockwise</option></select><label class="control-label">Number of turns</label><select class="select-control" id="rotationCount"><option value="1">1 rotation</option><option value="2">2 rotations</option><option value="3">3 rotations</option><option value="continuous">Continuous spin</option></select><div class="animation-control-grid"><label class="control-label">Move X <span class="animation-value" data-value-for="x">0 px</span><input type="range" data-anim-end="x" min="-960" max="960" value="0"></label><label class="control-label">Move Y <span class="animation-value" data-value-for="y">0 px</span><input type="range" data-anim-end="y" min="-540" max="540" value="0"></label><label class="control-label">Rotation <span class="animation-value" data-value-for="rotation">0°</span><input type="range" data-anim-end="rotation" min="-720" max="720" value="0"></label><label class="control-label">Scale X <span class="animation-value" data-value-for="scaleX">100%</span><input type="range" data-anim-end="scaleX" min="10" max="300" value="100"></label><label class="control-label">Scale Y <span class="animation-value" data-value-for="scaleY">100%</span><input type="range" data-anim-end="scaleY" min="10" max="300" value="100"></label><label class="control-label">Skew X <span class="animation-value" data-value-for="skewX">0°</span><input type="range" data-anim-end="skewX" min="-60" max="60" value="0"></label><label class="control-label">Skew Y <span class="animation-value" data-value-for="skewY">0°</span><input type="range" data-anim-end="skewY" min="-60" max="60" value="0"></label><label class="control-label">Opacity <span class="animation-value" data-value-for="alpha">100%</span><input type="range" data-anim-end="alpha" min="0" max="100" value="100"></label><label class="control-label">Brightness <span class="animation-value" data-value-for="brightness">0%</span><input type="range" data-anim-end="brightness" min="-100" max="100" value="0"></label><label class="control-label">Tint hue <span class="animation-value" data-value-for="tint">0°</span><input type="range" data-anim-end="tint" min="-180" max="180" value="0"></label></div><label class="control-label">Blend mode</label><select class="select-control" id="blendMode"><option value="source-over">Normal</option><option value="darken">Darken</option><option value="multiply">Multiply</option><option value="lighten">Lighten</option><option value="screen">Screen</option><option value="overlay">Overlay</option><option value="hard-light">Hard light</option><option value="lighter">Add</option><option value="difference">Difference</option><option value="exclusion">Exclusion</option></select><div class="animation-help">Shape blend crossfades raster drawings; true vector shape morphing, bone rigs and 3D transforms need editable vector/movie-clip layers.</div></div>
+        <div class="panel"><div class="panel-heading">Onion skin <span>PREVIEW</span></div><div class="toggle-row"><span>Show previous frame</span><label class="switch"><input id="onionToggle" type="checkbox" checked><span></span></label></div><label class="control-label">Preview opacity</label><div class="control-row"><input id="onionOpacity" type="range" min="5" max="45" value="18"><span class="value" id="onionValue">18%</span></div></div>
+        <div class="panel"><div class="panel-heading">Brush settings</div><label class="control-label">Size</label><div class="control-row"><input id="brushSize" type="range" min="1" max="80" value="8"><span class="value" id="brushValue">8 px</span></div><label class="control-label">Stroke opacity</label><div class="control-row"><input id="brushOpacity" type="range" min="5" max="100" value="100"><span class="value" id="brushOpacityValue">100%</span></div><label class="control-label">Smoothing</label><div class="control-row"><input id="smoothing" type="range" min="0" max="100" value="30"><span class="value" id="smoothingValue">30%</span></div></div>
+        <div class="panel"><div class="panel-heading">Color & canvas</div><label class="control-label">Fill background</label><select class="select-control" id="backgroundMode"><option value="white">Paper white</option><option value="transparent">Transparent</option><option value="solid">Solid color</option><option value="linear">Linear gradient</option><option value="radial">Radial gradient</option></select><div class="control-row" style="margin-top:8px"><input type="color" id="backgroundColor" value="#ffffff" style="width:32px;height:27px;padding:1px;border:1px solid #eee;border-radius:6px"><input type="color" id="gradientColor" value="#dbe9bf" style="width:32px;height:27px;padding:1px;border:1px solid #eee;border-radius:6px"><span class="value" style="text-align:left">Canvas colors</span></div><div class="panel-heading" style="margin-top:15px">Color grading <button type="button" class="auth-link grade-reset" id="resetGrade">Reset</button></div><div class="grading-controls" id="gradingControls"><label class="control-label">Exposure</label><div class="control-row"><input type="range" data-grade="exposure" min="-100" max="100" value="0"><span class="value grade-value">0</span></div><label class="control-label">Contrast</label><div class="control-row"><input type="range" data-grade="contrast" min="0" max="200" value="100"><span class="value grade-value">100%</span></div><label class="control-label">Saturation</label><div class="control-row"><input type="range" data-grade="saturation" min="0" max="200" value="100"><span class="value grade-value">100%</span></div><label class="control-label">Temperature</label><div class="control-row"><input type="range" data-grade="temperature" min="-100" max="100" value="0"><span class="value grade-value">0</span></div><label class="control-label">Tint</label><div class="control-row"><input type="range" data-grade="tint" min="-100" max="100" value="0"><span class="value grade-value">0</span></div><label class="control-label">Highlights</label><div class="control-row"><input type="range" data-grade="highlights" min="-100" max="100" value="0"><span class="value grade-value">0</span></div><label class="control-label">Shadows</label><div class="control-row"><input type="range" data-grade="shadows" min="-100" max="100" value="0"><span class="value grade-value">0</span></div></div></div>
+        <div class="panel"><div class="panel-heading">Layers <span>＋</span></div><div class="layer-item"><span class="layer-icon">◉</span> Drawing layer <span style="margin-left:auto;color:#a3a69f">•••</span></div><div class="layer-item"><span class="layer-icon">◉</span> Background <span style="margin-left:auto;color:#a3a69f">•••</span></div></div>
+        <div class="panel"><div class="panel-heading">Motion & effects <span>FX</span></div><label class="control-label">Frame transition</label><select class="select-control" id="transitionSelect"><option value="Cut">Cut</option><option value="Crossfade">Crossfade</option><option value="Fade to white">Fade to white</option><option value="Fade to black">Fade to black</option><option value="Wipe left">Wipe left</option><option value="Wipe right">Wipe right</option><option value="Wipe up">Wipe up</option><option value="Wipe down">Wipe down</option><option value="Slide left">Slide left</option><option value="Slide right">Slide right</option><option value="Zoom in">Zoom in</option><option value="Zoom out">Zoom out</option><option value="Iris">Iris</option><option value="Dissolve">Dissolve</option></select><label class="control-label">Transition duration</label><div class="control-row"><input id="transitionDuration" type="range" min="2" max="24" value="6"><span class="value" id="transitionDurationValue">6 frames</span></div><label class="control-label">Click effects to stack them</label><div class="effect-grid" id="effectGrid"><button type="button" class="effect-chip" data-effect="softFocus" aria-pressed="false">◌ Soft focus</button><button type="button" class="effect-chip" data-effect="glow" aria-pressed="false">✧ Glow</button><button type="button" class="effect-chip" data-effect="vignette" aria-pressed="false">◉ Vignette</button><button type="button" class="effect-chip" data-effect="filmGrain" aria-pressed="false">⠿ Film grain</button><button type="button" class="effect-chip" data-effect="pixelate" aria-pressed="false">▦ Pixelate</button><button type="button" class="effect-chip" data-effect="chromatic" aria-pressed="false">◈ Chromatic</button><button type="button" class="effect-chip" data-effect="invert" aria-pressed="false">◐ Invert</button><button type="button" class="effect-chip" data-effect="sepia" aria-pressed="false">◍ Sepia</button></div><label class="control-label">Effect intensity</label><div class="control-row"><input id="effectIntensity" type="range" min="0" max="100" value="55"><span class="value" id="effectIntensityValue">55%</span></div></div>
+        <div class="panel" style="border-bottom:0"><button class="btn" id="addTextBtn">＋ Add text to frame</button></div>
+      </aside>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<div class="modal-backdrop" id="projectModal"><div class="modal"><h2 id="modalTitle">New project</h2><p id="modalDescription">Give your next idea a name and start animating.</p><input id="projectNameInput" placeholder="e.g. Little cloud's journey" maxlength="48"><div class="modal-actions"><button class="btn" id="cancelModal">Cancel</button><button class="btn primary" id="confirmModal">Create project</button></div></div></div>
+<div class="modal-backdrop" id="combineModal"><div class="modal"><h2>Combine projects</h2><p>Choose projects to append into a new animation, in the order shown.</p><div class="modal-projects" id="combineChoices"></div><div class="modal-actions"><button class="btn" id="cancelCombine">Cancel</button><button class="btn primary" id="confirmCombine">Combine selected</button></div></div></div>
+<input id="importFile" type="file" accept=".json,application/json" hidden>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  function makeInspectorCompact() {
+    document.querySelectorAll('#studioApp .inspector .panel').forEach((panel,index)=>{
+      const heading=panel.querySelector(':scope > .panel-heading');
+      if(!heading)return;
+      const details=document.createElement('details');details.className=panel.className;details.open=index<2;
+      if(panel.hasAttribute('style'))details.setAttribute('style',panel.getAttribute('style'));
+      const summary=document.createElement('summary');summary.className='panel-heading';summary.innerHTML=heading.innerHTML;heading.replaceWith(summary);
+      while(panel.firstChild)details.append(panel.firstChild);
+      panel.replaceWith(details);
+    });
+    const animationPanel=[...document.querySelectorAll('#studioApp details.panel')].find(panel=>panel.querySelector('summary')?.textContent.includes('Animation & tweens'));
+    if(animationPanel){
+      const maskLabel=document.createElement('label');maskLabel.className='control-label';maskLabel.textContent='Animated mask';
+      const maskSelect=document.createElement('select');maskSelect.className='select-control';maskSelect.id='maskMode';maskSelect.setAttribute('aria-label','Animated mask');
+      maskSelect.innerHTML='<option value="none">No mask</option><option value="wipeLeft">Reveal from left</option><option value="wipeRight">Reveal from right</option><option value="wipeUp">Reveal from bottom</option><option value="wipeDown">Reveal from top</option><option value="spotlight">Spotlight reveal</option>';
+      const note=animationPanel.querySelector('.animation-help:last-child');note.textContent='Raster drawings crossfade for shape blends. Tilt is a 2D projection; true vector morphing, bone rigs and 3D require editable vector/movie-clip layers.';animationPanel.insertBefore(maskLabel,note);animationPanel.insertBefore(maskSelect,note);
+      const grid=animationPanel.querySelector('.animation-control-grid');
+      for(const [key,label] of [['rotateX','3D tilt X (2D projection)'],['rotateY','3D tilt Y (2D projection)']]){
+        const field=document.createElement('label');field.className='control-label';field.append(`${label} `);
+        const value=document.createElement('span');value.className='animation-value';value.dataset.valueFor=key;value.textContent='0°';field.append(value);
+        const input=document.createElement('input');input.type='range';input.dataset.animEnd=key;input.min='-80';input.max='80';input.value='0';input.setAttribute('aria-label',label);field.append(input);grid.append(field);
+      }
+    }
+    const effectGrid=document.getElementById('effectGrid');
+    if(effectGrid)for(const [key,label,icon] of [['blur','Blur','◌'],['dropShadow','Drop shadow','▧'],['innerShadow','Inner shadow','◐'],['innerGlow','Inner glow','✧'],['bevel','Bevel','◇'],['gradientBevel','Gradient bevel','◈'],['gradientGlow','Gradient glow','✦'],['adjustColor','Adjust color','◍']]){
+      const button=document.createElement('button');button.type='button';button.className='effect-chip';button.dataset.effect=key;button.setAttribute('aria-pressed','false');button.textContent=`${icon} ${label}`;effectGrid.append(button);
+    }
+  }
+  function installEditorTooltips() {
+    const tooltip=document.createElement('div');tooltip.className='editor-tooltip';tooltip.setAttribute('role','tooltip');document.body.append(tooltip);
+    const buttonHelp={newProjectBtn:'Start a new animation project.',combineBtn:'Append frames from other projects into a new project.',exportProjectBtn:'Download this project as an editable project file.',importProjectBtn:'Open a project file from your device.',undoBtn:'Undo the last drawing change.',redoBtn:'Restore the change you just undid.',exportVideoBtn:'Render and download this animation as a video.',signOutBtn:'Sign out of your account.',clearFrameBtn:'Erase the current frame.',previousFrame:'Go to the previous frame.',playBtn:'Preview the animation from the beginning.',nextFrame:'Go to the next frame.',duplicateFrame:'Copy this frame to a new frame.',deleteFrame:'Delete this frame from the timeline.',fullscreenBtn:'Expand the stage to fullscreen.',zoomIn:'Make the stage appear larger.',zoomOut:'Make the stage appear smaller.',addTextBtn:'Choose the text tool, then click the stage to place text.',resetGrade:'Restore the default color grading.'};
+    let active=null,timer=0;
+    const targetFor=element=>element?.closest('#studioApp button,#studioApp summary,#studioApp input,#studioApp select,#studioApp [role="button"],#studioApp .color-swatch');
+    const labelFor=element=>{
+      const explicit=element.dataset.tooltip||element.getAttribute('aria-label')||element.getAttribute('title');
+      if(explicit)return explicit;
+      const ownerLabel=element.closest('label');
+      if(ownerLabel){const text=[...ownerLabel.childNodes].filter(node=>node.nodeType===Node.TEXT_NODE).map(node=>node.textContent).join(' ').trim();if(text)return text}
+      if(element.matches('input,select')){
+        if(element.previousElementSibling?.matches('.control-label'))return element.previousElementSibling.textContent.trim();
+        const previous=element.closest('.control-row')?.previousElementSibling;
+        if(previous?.matches('.control-label'))return previous.textContent.trim();
+        if(element.id==='fpsInput')return 'Animation frame rate';
+        if(element.id==='strokeColor')return 'Choose the drawing color';
+        if(element.id==='strokeStyle')return 'Choose solid or gradient strokes';
+        if(element.id==='backgroundColor')return 'Choose the first canvas color';
+        if(element.id==='gradientColor')return 'Choose the second canvas color';
+        if(element.id==='importFile')return 'Import a project file';
+      }
+      if(element.matches('.color-swatch'))return 'Choose the drawing color';
+      if(element.matches('summary'))return `${element.textContent.trim()} options`;
+      return element.textContent.trim().replace(/\s+/g,' ').slice(0,80);
+    };
+    const hide=()=>{clearTimeout(timer);active=null;tooltip.classList.remove('visible')};
+    const show=(element)=>{
+      const text=labelFor(element);if(!text)return;
+      clearTimeout(timer);active=element;tooltip.textContent=text;
+      const rect=element.getBoundingClientRect();tooltip.style.left=`${Math.max(8,Math.min(rect.left+(rect.width-tooltip.offsetWidth)/2,innerWidth-tooltip.offsetWidth-8))}px`;
+      tooltip.style.top=`${Math.max(8,rect.top-tooltip.offsetHeight-7)}px`;tooltip.classList.add('visible');
+    };
+    document.addEventListener('pointerover',event=>{
+      const element=targetFor(event.target);if(!element||element===active)return;
+      if(event.relatedTarget&&element.contains(event.relatedTarget))return;
+      const description=buttonHelp[element.id]||(element.matches('[data-menu-action]')?element.textContent.trim():null);
+      if(description)element.dataset.tooltip=description;
+      if(element.hasAttribute('title')){if(!element.dataset.tooltip)element.dataset.tooltip=element.title;element.removeAttribute('title')}
+      hide();timer=setTimeout(()=>show(element),380);
+    });
+    document.addEventListener('pointerout',event=>{
+      if(active&&active.contains(event.target)&&!active.contains(event.relatedTarget))hide();
+    });
+    document.addEventListener('focusin',event=>{const element=targetFor(event.target);if(element)show(element)});
+    document.addEventListener('focusout',event=>{if(active&&active.contains(event.target))hide()});
+    document.addEventListener('pointerdown',hide);
+    window.addEventListener('scroll',hide,true);
+  }
+  makeInspectorCompact();
+  installEditorTooltips();
+  const art = $('artCanvas'), onion = $('onionCanvas'), draw = $('drawCanvas'), artCtx = art.getContext('2d'), onionCtx = onion.getContext('2d'), ctx = draw.getContext('2d');
+  let STORAGE_KEY = 'motion-canvas-projects-v1';
+  let firebaseApp = null, firebaseAuth = null, currentUser = null, signupMode = false, authBusy = false;
+  const tools = [
+    ['select','↖','Select'],['pen','✎','Pen'],['pencil','╱','Pencil'],['brush','●','Brush'],['fill','▧','Paint bucket'],
+    ['eyedropper','◉','Eyedropper'],['eraser','◩','Eraser'],['line','╱','Line'],['rectangle','▱','Rectangle'],['ellipse','◯','Ellipse'],['text','T','Text']
+  ];
+  let projects = [], currentId = '', currentFrame = 0, currentTool = 'pen', color = '#313b2d', brushSize = 8, brushOpacity = 1;
+  let drawing = false, startPoint = null, lastPoint = null, shapeBase = null, smoothing = .3, playback = false, playbackTimer = null, zoom = 100, undoStack = [], redoStack = [], toastTimer;
+
+  function blankFrame() { const c=document.createElement('canvas'); c.width=1920;c.height=1080; return c.toDataURL('image/png'); }
+  function newProject(name) { return {id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()+Math.random()), name, fps:12, width:1920, height:1080, frames:[{image:blankFrame(),duration:1}], gradeSettings:{exposure:0,contrast:100,saturation:100,temperature:0,tint:0,highlights:0,shadows:0},animationSettings:{type:'motion',preset:'custom',ease:'linear',startFrame:1,endFrame:1,rotationDirection:'auto',rotationCount:'1',blendMode:'source-over',mask:'none',values:{x:0,y:0,rotation:0,scaleX:100,scaleY:100,skewX:0,skewY:0,rotateX:0,rotateY:0,alpha:100,brightness:0,tint:0}},transition:'Cut',transitionDuration:6,effects:[],effectIntensity:55,backgroundMode:'white',backgroundColor:'#ffffff',gradientColor:'#dbe9bf'}; }
+  function persist() { try { localStorage.setItem(STORAGE_KEY,JSON.stringify(projects)); $('saveStatus').textContent='Projects saved on this device'; } catch(error) { console.error('Unable to save projects',error); $('saveStatus').textContent='Save failed'; showToast('Could not save: browser storage is full.'); } }
+  function setLoginMessage(message,type='error') {const box=$('loginMessage');box.textContent=message;box.className=`login-message visible ${type}`}
+  function clearLoginMessage() {$('loginMessage').textContent='';$('loginMessage').className='login-message'}
+  function initializeFirebase() {
+    const config=window.MOTION_CANVAS_FIREBASE_CONFIG;
+    const required=['apiKey','authDomain','projectId','appId'];
+    if(!config||required.some(key=>typeof config[key]!=='string'||!config[key].trim()||config[key].startsWith('YOUR_'))){setLoginMessage('Firebase is not configured yet. The site administrator needs to add the Firebase web app settings to firebase-config.js.','info');return false}
+    if(!window.firebase?.initializeApp||!window.firebase?.auth){setLoginMessage('Firebase could not load. Check your internet connection, then refresh the page.','error');return false}
+    try{firebaseApp=window.firebase.apps.length?window.firebase.app():window.firebase.initializeApp(config);firebaseAuth=firebaseApp.auth();return true}
+    catch(error){console.error('Firebase initialization failed',error);setLoginMessage('Could not initialize Firebase. Check the web app configuration in firebase-config.js.');return false}
+  }
+  async function completeSignIn(user) {
+    if(!user||!firebaseAuth)return;
+    if(currentUser?.uid===user.uid&&$('studioApp').classList.contains('authenticated'))return;
+    currentUser=user;STORAGE_KEY=`motion-canvas-projects-v1:${user.uid}`;
+    const displayName=user.displayName||user.email?.split('@')[0]||'Animator';
+    $('loginPage').hidden=true;$('studioApp').classList.add('authenticated');$('accountEmail').textContent=user.email||displayName;$('profile-name').textContent=displayName;
+    try{const saved=localStorage.getItem(STORAGE_KEY);projects=JSON.parse(saved||localStorage.getItem('motion-canvas-projects-v1')||'[]');if(!Array.isArray(projects))projects=[];if(!saved&&projects.length)persist()}catch(error){console.error('Saved projects could not be read',error);projects=[]}
+    if(!projects.length){projects=[newProject('Sunday sketches')];persist()}
+    currentId=projects[0].id;currentFrame=0;renderProjects();renderFrame(0);updateBrush();clearLoginMessage();
+  }
+  function bootstrapAuth() {
+    if(!initializeFirebase())return;
+    firebaseAuth.onAuthStateChanged(user=>{
+      if(user)completeSignIn(user).catch(error=>{console.error('Could not load the signed-in workspace',error);setLoginMessage('You are signed in, but your animation workspace could not be loaded.')});
+      else{currentUser=null;$('studioApp').classList.remove('authenticated');$('loginPage').hidden=false}
+    },error=>{console.error('Firebase auth state could not be checked',error);setLoginMessage(`Could not check sign-in status: ${error.message}`)});
+  }
+  async function setAuthBusy(busy) {
+    authBusy=busy;$('authSubmit').disabled=busy;document.querySelectorAll('.social-button').forEach(button=>button.disabled=busy);
+    $('authSubmit').innerHTML=busy?'Connecting securely…':`${signupMode?'Create your account':'Sign in to your studio'} <span>↗</span>`;
+  }
+  function friendlyAuthError(error) {
+    const message=error?.message||'Authentication failed.';
+    if(/invalid login credentials/i.test(message))return 'That email and password do not match. Try again or create an account.';
+    if(/auth\/invalid-credential|auth\/wrong-password|auth\/user-not-found/i.test(message))return 'That email and password do not match. Try again or create an account.';
+    if(/auth\/email-already-in-use/i.test(message))return 'An account already exists for this email. Try signing in instead.';
+    if(/auth\/operation-not-allowed/i.test(message))return 'This sign-in method is not enabled in Firebase Console → Authentication → Sign-in method.';
+    if(/auth\/unauthorized-domain/i.test(message))return 'Add this website domain to Firebase Console → Authentication → Settings → Authorized domains.';
+    if(/auth\/popup-blocked/i.test(message))return 'Your browser blocked the sign-in window. Allow pop-ups and try again.';
+    if(/auth\/network-request-failed/i.test(message))return 'Could not reach Firebase. Check your internet connection and try again.';
+    return message;
+  }
+  async function submitEmailAuth(event) {
+    event.preventDefault();clearLoginMessage();if(authBusy)return;
+    if(!firebaseAuth){setLoginMessage('Firebase is not configured. Ask the site administrator to finish the site setup.','error');return}
+    const email=$('authEmail').value.trim(),password=$('authPassword').value;
+    if(!email||password.length<8){setLoginMessage('Enter a valid email and a password with at least 8 characters.');return}
+    await setAuthBusy(true);
+    try{
+      const result=signupMode?await firebaseAuth.createUserWithEmailAndPassword(email,password):await firebaseAuth.signInWithEmailAndPassword(email,password);
+      await completeSignIn(result.user);
+    }catch(error){console.error('Email authentication failed',error);setLoginMessage(friendlyAuthError(error))}
+    finally{await setAuthBusy(false)}
+  }
+  async function signInWithProvider(provider) {
+    clearLoginMessage();if(!firebaseAuth){setLoginMessage('Firebase is not configured. Ask the site administrator to finish the site setup.','error');return}
+    await setAuthBusy(true);
+    try{const providers={google:()=>new firebase.auth.GoogleAuthProvider(),azure:()=>new firebase.auth.OAuthProvider('microsoft.com')};const providerFactory=providers[provider];if(!providerFactory)throw new Error('Unsupported sign-in provider.');await firebaseAuth.signInWithPopup(providerFactory())}
+    catch(error){console.error(`${provider} sign-in failed`,error);setLoginMessage(friendlyAuthError(error))}
+    finally{await setAuthBusy(false)}
+  }
+  function toggleAuthMode() {
+    signupMode=!signupMode;$('authModeHint').textContent=signupMode?'Your new creative space awaits':'Welcome back';
+    $('authSwitchText').textContent=signupMode?'Already have an account?':'New to Meow Animates?';
+    $('authModeToggle').textContent=signupMode?'Sign in':'Create an account';
+    $('authPassword').autocomplete=signupMode?'new-password':'current-password';
+    $('forgotPasswordBtn').hidden=signupMode;clearLoginMessage();$('authSubmit').innerHTML=`${signupMode?'Create your account':'Sign in to your studio'} <span>↗</span>`;
+  }
+  async function sendPasswordReset() {
+    const email=$('authEmail').value.trim();clearLoginMessage();
+    if(!email){setLoginMessage('Enter your email address first, then choose “Forgot password?”.');$('authEmail').focus();return}
+    if(!firebaseAuth){setLoginMessage('Firebase is not configured. Ask the site administrator to finish the site setup.');return}
+    try{await firebaseAuth.sendPasswordResetEmail(email);setLoginMessage('Password reset email sent. Check your inbox.','success')}
+    catch(error){console.error('Password reset request failed',error);setLoginMessage(friendlyAuthError(error))}
+  }
+  function project() { return projects.find(p=>p.id===currentId); }
+  function saveFrame() { const p=project(); if(!p)return; p.frames[currentFrame].image=draw.toDataURL('image/png'); p.frames[currentFrame].duration=1; persist(); }
+  function loadImage(data,callback) { const image=new Image(); image.onload=()=>callback(image); image.onerror=()=>{console.error('Could not load animation frame'); showToast('Could not load this frame.');}; image.src=data; }
+  function clearCanvas() { artCtx.clearRect(0,0,art.width,art.height); }
+  const gradeDefaults={exposure:0,contrast:100,saturation:100,temperature:0,tint:0,highlights:0,shadows:0};
+  const gradeNames={exposure:'Exposure',contrast:'Contrast',saturation:'Saturation',temperature:'Temperature',tint:'Tint',highlights:'Highlights',shadows:'Shadows'};
+  const effectNames={softFocus:'Soft focus',glow:'Glow',vignette:'Vignette',filmGrain:'Film grain',pixelate:'Pixelate',chromatic:'Chromatic',invert:'Invert',sepia:'Sepia',blur:'Blur',dropShadow:'Drop shadow',innerShadow:'Inner shadow',innerGlow:'Inner glow',bevel:'Bevel',gradientBevel:'Gradient bevel',gradientGlow:'Gradient glow',adjustColor:'Adjust color'};
+  const animationValueDefaults={x:0,y:0,rotation:0,scaleX:100,scaleY:100,skewX:0,skewY:0,rotateX:0,rotateY:0,alpha:100,brightness:0,tint:0};
+  const animationPresets={
+    flyIn:{from:{x:-640,alpha:0},to:{x:0,alpha:100},ease:'easeOut'},flyOut:{from:{x:0,alpha:100},to:{x:640,alpha:0},ease:'easeIn'},
+    slideLeft:{from:{x:500},to:{x:0},ease:'easeOut'},slideRight:{from:{x:-500},to:{x:0},ease:'easeOut'},slideUp:{from:{y:360},to:{y:0},ease:'easeOut'},slideDown:{from:{y:-360},to:{y:0},ease:'easeOut'},
+    bounce:{from:{y:-260},to:{y:0},ease:'bounce'},bounceIn:{from:{y:-300,alpha:0},to:{y:0,alpha:100},ease:'bounce'},bounceOut:{from:{y:0,alpha:100},to:{y:300,alpha:0},ease:'bounce'},
+    zoomIn:{from:{scaleX:10,scaleY:10,alpha:0},to:{scaleX:100,scaleY:100,alpha:100},ease:'back'},zoomOut:{from:{scaleX:100,scaleY:100,alpha:100},to:{scaleX:10,scaleY:10,alpha:0},ease:'easeIn'},
+    grow:{from:{scaleX:100,scaleY:100},to:{scaleX:160,scaleY:160},ease:'easeOut'},shrink:{from:{scaleX:100,scaleY:100},to:{scaleX:45,scaleY:45},ease:'easeIn'},
+    rotateLeft:{from:{rotation:0},to:{rotation:-360},ease:'easeInOut'},rotateRight:{from:{rotation:0},to:{rotation:360},ease:'easeInOut'},spin:{from:{rotation:0},to:{rotation:360},ease:'linear'},
+    pulse:{ease:'easeInOut'},swing:{ease:'easeInOut'},shake:{ease:'easeInOut'},wobble:{ease:'easeInOut'},flash:{ease:'linear'},
+    fadeIn:{from:{alpha:0},to:{alpha:100},ease:'easeOut'},fadeOut:{from:{alpha:100},to:{alpha:0},ease:'easeIn'}
+  };
+  function animationSettings(p=project()) {
+    const saved=p?.animationSettings||{};
+    return {...saved,type:saved.type||'motion',preset:saved.preset||'custom',ease:saved.ease||'linear',rotationDirection:saved.rotationDirection||'auto',rotationCount:saved.rotationCount||'1',blendMode:saved.blendMode||'source-over',mask:saved.mask||'none',fromValues:{...animationValueDefaults,...(saved.fromValues||{})},values:{...animationValueDefaults,...(saved.values||{})},startFrame:Math.max(1,Number(saved.startFrame)||1),endFrame:Math.max(1,Number(saved.endFrame)||p?.frames.length||1)};
+  }
+  function animationEase(t,ease) {
+    const bounceOut=x=>{const n=7.5625,d=2.75;if(x<1/d)return n*x*x;if(x<2/d){x-=1.5/d;return n*x*x+.75}if(x<2.5/d){x-=2.25/d;return n*x*x+.9375}x-=2.625/d;return n*x*x+.984375};
+    if(ease==='easeIn'||ease==='quad')return t*t;
+    if(ease==='easeOut')return 1-(1-t)*(1-t);
+    if(ease==='easeInOut')return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+    if(ease==='cubic')return t*t*t;
+    if(ease==='quart')return t**4;
+    if(ease==='quint')return t**5;
+    if(ease==='circ')return 1-Math.sqrt(Math.max(0,1-t*t));
+    if(ease==='back'){const c=1.70158;return 1+(c+1)*Math.pow(t-1,3)+c*Math.pow(t-1,2)}
+    if(ease==='bounce')return 1-bounceOut(1-t);
+    if(ease==='elastic')return t===0||t===1?t:Math.pow(2,-10*t)*Math.sin((t*10-.75)*(2*Math.PI/3))+1;
+    return t;
+  }
+  function animationProgress(index,settings) {
+    const start=settings.startFrame-1,end=settings.endFrame-1;
+    const raw=end===start?(index<start?0:1):(index-start)/(end-start);
+    return animationEase(Math.max(0,Math.min(1,raw)),settings.ease);
+  }
+  function animatedValues(index,p) {
+    const settings=animationSettings(p),preset=settings.preset,from={...animationValueDefaults,...settings.fromValues},values={...animationValueDefaults,...settings.values};
+    if(settings.type==='none'||settings.type==='shape')return {...animationValueDefaults};
+    const t=animationProgress(index,settings);
+    const result={};for(const key of Object.keys(animationValueDefaults))result[key]=from[key]+(Number(values[key])-from[key])*t;
+    if(preset==='pulse'){result.scaleX=100+25*Math.sin(t*Math.PI);result.scaleY=100+25*Math.sin(t*Math.PI)}
+    if(preset==='swing')result.rotation=30*Math.sin(t*Math.PI*3);
+    if(preset==='shake')result.x=40*Math.sin(t*Math.PI*12)*(1-t);
+    if(preset==='wobble')result.rotation=25*Math.sin(t*Math.PI*8)*(1-t);
+    if(preset==='flash')result.alpha=t>=1?100:Math.max(0,Math.sin(t*Math.PI*10))*100;
+    const rotationDelta=Number(values.rotation)-Number(from.rotation),turnCount=settings.rotationCount==='continuous'?Math.max(1,Math.ceil((settings.endFrame-settings.startFrame+1)/12)):Number(settings.rotationCount)||1;
+    if(settings.rotationDirection==='cw')result.rotation=Number(from.rotation)+Math.abs(rotationDelta||360)*turnCount*t;
+    else if(settings.rotationDirection==='ccw')result.rotation=Number(from.rotation)-Math.abs(rotationDelta||360)*turnCount*t;
+    else if(settings.rotationCount!=='1'&&rotationDelta)result.rotation=Number(from.rotation)+rotationDelta*turnCount*t;
+    return result;
+  }
+  function syncAnimationControls(p=project()) {
+    if(!p)return;
+    const settings=animationSettings(p);
+    $('tweenType').value=settings.type;$('motionPreset').value=settings.preset;$('tweenEase').value=settings.ease;
+    $('tweenStartFrame').value=Math.min(settings.startFrame,p.frames.length);$('tweenEndFrame').value=Math.min(settings.endFrame,p.frames.length);
+    $('tweenStartFrame').max=p.frames.length;$('tweenEndFrame').max=p.frames.length;
+    $('rotationDirection').value=settings.rotationDirection;$('rotationCount').value=settings.rotationCount;$('blendMode').value=settings.blendMode;
+    $('maskMode').value=settings.mask||'none';
+    document.querySelectorAll('[data-anim-end]').forEach(input=>{const key=input.dataset.animEnd;input.value=settings.values[key];const label=$(`[data-value-for="${key}"]`);if(label)label.textContent=key==='x'||key==='y'?`${settings.values[key]} px`:key==='rotation'||key==='skewX'||key==='skewY'||key==='rotateX'||key==='rotateY'||key==='tint'?`${settings.values[key]}°`:`${settings.values[key]}%`});
+  }
+  function updateAnimationSettings(patch) {
+    const p=project();if(!p)return;
+    p.animationSettings={...animationSettings(p),...patch,values:{...animationSettings(p).values,...(patch.values||{})},fromValues:{...animationSettings(p).fromValues,...(patch.fromValues||{})}};
+    persist();
+  }
+  function updateAnimationValueLabels() {
+    document.querySelectorAll('[data-anim-end]').forEach(input=>{
+      const value=Number(input.value),key=input.dataset.animEnd,label=$(`[data-value-for="${key}"]`);
+      if(label)label.textContent=key==='x'||key==='y'?`${value} px`:key==='rotation'||key==='skewX'||key==='skewY'||key==='rotateX'||key==='rotateY'||key==='tint'?`${value}°`:`${value}%`;
+    });
+  }
+  function gradeSettings(p=project()) {return {...gradeDefaults,...(p?.gradeSettings||{})}}
+  function displayGradeValue(name,value) {if(name==='contrast'||name==='saturation')return `${value}%`;if(name==='exposure')return `${value>0?'+':''}${(value/10).toFixed(1)} EV`;return `${value>0?'+':''}${value}`}
+  function syncGradeControls(p=project()) {if(!p)return;const settings=gradeSettings(p);document.querySelectorAll('[data-grade]').forEach(input=>{const name=input.dataset.grade;input.value=settings[name];input.nextElementSibling.textContent=displayGradeValue(name,settings[name])});document.querySelectorAll('.effect-chip').forEach(button=>button.setAttribute('aria-pressed',String((p.effects||[]).includes(button.dataset.effect))));$('effectIntensity').value=p.effectIntensity??55;$('effectIntensityValue').textContent=`${$('effectIntensity').value}%`;$('transitionDuration').value=p.transitionDuration??6;$('transitionDurationValue').textContent=`${$('transitionDuration').value} frames`}
+  function visualFilter() {
+    const p=project(),g=gradeSettings(p),effects=p?.effects||[],intensity=(p?.effectIntensity??55)/100;
+    const exposure=Math.pow(2,g.exposure/100),contrast=g.contrast/100,saturation=g.saturation/100;
+    const brightness=exposure*(1+g.shadows*.0015+g.highlights*.0005);
+    const filters=[`brightness(${brightness})`,`contrast(${contrast})`,`saturate(${saturation})`];
+    if(g.temperature>0)filters.push(`sepia(${g.temperature*.004})`);else if(g.temperature<0)filters.push(`hue-rotate(${g.temperature*.12}deg)`);
+    if(g.tint)filters.push(`hue-rotate(${g.tint*.18}deg)`);
+    if(effects.includes('softFocus'))filters.push(`blur(${intensity*2}px)`);
+    if(effects.includes('blur'))filters.push(`blur(${intensity*8}px)`);
+    if(effects.includes('glow'))filters.push(`brightness(${1+intensity*.22}) saturate(${1+intensity*.16})`);
+    if(effects.includes('dropShadow'))filters.push(`drop-shadow(0 ${Math.round(intensity*10)}px ${Math.round(intensity*18)}px rgba(0,0,0,.65))`);
+    if(effects.includes('innerShadow'))filters.push(`drop-shadow(0 0 ${Math.round(intensity*6)}px rgba(0,0,0,.8))`);
+    if(effects.includes('innerGlow'))filters.push(`drop-shadow(0 0 ${Math.round(intensity*8)}px rgba(255,205,112,.9))`);
+    if(effects.includes('bevel')||effects.includes('gradientBevel'))filters.push(`drop-shadow(2px 2px ${Math.round(intensity*5)}px rgba(0,0,0,.65)) drop-shadow(-1px -1px ${Math.round(intensity*3)}px rgba(255,255,255,.7))`);
+    if(effects.includes('gradientGlow'))filters.push(`drop-shadow(0 0 ${Math.round(intensity*18)}px rgba(255,150,75,.9))`);
+    if(effects.includes('chromatic'))filters.push(`saturate(${1+intensity*.7})`);
+    if(effects.includes('adjustColor'))filters.push(`contrast(${1+intensity*.4}) saturate(${1+intensity*.6})`);
+    if(effects.includes('sepia'))filters.push(`sepia(${intensity})`);
+    if(effects.includes('invert'))filters.push(`invert(${intensity})`);
+    return filters.join(' ');
+  }
+  function applyPreviewEffects() {
+    const p=project(),effects=p?.effects||[],amount=(p?.effectIntensity??55)/100;
+    $('canvasWrap').style.filter=visualFilter();
+    $('canvasWrap').style.boxShadow=effects.includes('glow')||effects.includes('innerGlow')||effects.includes('gradientGlow')?`0 7px 28px #0005,0 0 ${Math.round(amount*34)}px rgba(255,205,112,${(amount*.6).toFixed(2)})`:'0 3px 14px #0006';
+    $('canvasWrap').style.outline=effects.includes('chromatic')?`${Math.max(1,Math.round(amount*3))}px solid rgba(170,100,255,${(amount*.45).toFixed(2)})`:'none';
+    $('canvasWrap').style.imageRendering=effects.includes('pixelate')?'pixelated':'auto';
+    $('canvasWrap').style.setProperty('--vignette-opacity',String(effects.includes('vignette')?amount*.75:0));
+    $('canvasWrap').style.setProperty('--grain-opacity',String(effects.includes('filmGrain')?amount*.18:0));
+    const blendMode=animationSettings(p).blendMode||'source-over';
+    draw.style.mixBlendMode=blendMode==='source-over'?'normal':blendMode==='lighter'?'plus-lighter':blendMode;
+  }
+  function paintBackground() {
+    const mode=$('backgroundMode').value, first=$('backgroundColor').value, second=$('gradientColor').value;
+    if(mode==='transparent'){artCtx.clearRect(0,0,art.width,art.height);return}
+    if(mode==='white'){artCtx.fillStyle='#fff';artCtx.fillRect(0,0,art.width,art.height);return}
+    let fill=first;
+    if(mode==='linear'){fill=artCtx.createLinearGradient(0,0,art.width,art.height);fill.addColorStop(0,first);fill.addColorStop(1,second)}
+    if(mode==='radial'){fill=artCtx.createRadialGradient(art.width/2,art.height/2,10,art.width/2,art.height/2,art.width*.65);fill.addColorStop(0,first);fill.addColorStop(1,second)}
+    artCtx.fillStyle=fill;artCtx.fillRect(0,0,art.width,art.height);
+  }
+  let lastRenderedId='', lastRenderedFrame=-1;
+  function renderFrame(index) {
+    const p=project(); if(!p)return; currentFrame=Math.max(0,Math.min(index,p.frames.length-1));
+    if(lastRenderedId!==p.id||lastRenderedFrame!==currentFrame){undoStack=[];redoStack=[];lastRenderedId=p.id;lastRenderedFrame=currentFrame}
+    const frame=p.frames[currentFrame];
+    paintBackground();
+    ctx.clearRect(0,0,draw.width,draw.height);
+    if(frame.image) loadImage(frame.image,img=>{ctx.clearRect(0,0,draw.width,draw.height);ctx.drawImage(img,0,0,draw.width,draw.height);});
+    onionCtx.clearRect(0,0,onion.width,onion.height);
+    $('stageFrameNum').textContent=String(currentFrame+1).padStart(2,'0');
+    $('frameCount').textContent=`(${p.frames.length})`; $('canvasMeta').textContent=`${p.width} × ${p.height} · ${p.fps} fps`;
+    $('fpsInput').value=p.fps; $('breadcrumbName').textContent=p.name;
+    $('backgroundMode').value=p.backgroundMode||'white'; $('backgroundColor').value=p.backgroundColor||'#ffffff'; $('gradientColor').value=p.gradientColor||'#dbe9bf';
+    $('transitionSelect').value=p.transition||'Cut';
+    syncGradeControls(p);syncAnimationControls(p);applyPreviewEffects();
+    drawOnion(); renderTimeline();
+  }
+  function drawOnion() {
+    const p=project(); if(!$('onionToggle').checked||currentFrame===0||!p)return;
+    loadImage(p.frames[currentFrame-1].image,img=>{const alpha=Number($('onionOpacity').value)/100;onionCtx.save();onionCtx.globalAlpha=alpha;onionCtx.drawImage(img,0,0,onion.width,onion.height);onionCtx.restore();});
+  }
+  function renderTimeline() {
+    const p=project(), track=$('frameTrack');track.replaceChildren();
+    if(!p)return;
+    $('frameCount').textContent=`(${p.frames.length})`;
+    const cells=$('layerTrackCells');cells.replaceChildren();
+    p.frames.forEach((frame,i)=>{
+      const card=document.createElement('div');card.className='frame-card'+(i===currentFrame?' selected':'');card.setAttribute('role','button');card.setAttribute('aria-label',`Frame ${i+1}`);card.tabIndex=0;
+      const exposure=document.createElement('button');exposure.type='button';exposure.className='layer-exposure'+(i===currentFrame?' selected':'');exposure.title=`Go to frame ${i+1}`;exposure.setAttribute('aria-label',`Go to frame ${i+1}`);exposure.onclick=()=>{saveFrame();renderFrame(i)};cells.append(exposure);
+      const thumb=document.createElement('div');thumb.className='frame-thumb';
+      const c=document.createElement('canvas');c.width=192;c.height=108;thumb.append(c);
+      const badge=document.createElement('span');badge.className='frame-number';badge.textContent=String(i+1).padStart(2,'0');thumb.append(badge);
+      const duration=document.createElement('div');duration.className='frame-duration';duration.textContent=`${Math.round(1000/p.fps)} ms`;
+      card.append(thumb,duration);card.addEventListener('click',()=>{saveFrame();renderFrame(i)});
+      card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();saveFrame();renderFrame(i)}});
+      track.append(card);const tc=c.getContext('2d');tc.fillStyle='#fff';tc.fillRect(0,0,c.width,c.height);
+      const image=new Image();image.onload=()=>tc.drawImage(image,0,0,c.width,c.height);image.src=frame.image;
+    });
+    const add=document.createElement('button');add.className='add-frame';add.textContent='+';add.title='Add frame';add.setAttribute('aria-label','Add frame');add.onclick=()=>addFrame();track.append(add);
+  }
+  function renderProjects() {
+    const list=$('projectsList');list.replaceChildren();
+    projects.forEach(p=>{const b=document.createElement('button');b.className='project-row'+(p.id===currentId?' active':'');b.innerHTML=`<span class="project-dot"></span><span></span><span class="row-count">${p.frames.length}f</span>`;b.children[1].textContent=p.name;b.title=p.name;b.onclick=()=>switchProject(p.id);list.append(b)});
+  }
+  function switchProject(id) { saveFrame();currentId=id;currentFrame=0;undoStack=[];redoStack=[];renderProjects();renderFrame(0); }
+  function showToast(message) {const t=$('toast');t.textContent=message;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2400)}
+  function snapshot() {undoStack.push(draw.toDataURL('image/png'));if(undoStack.length>40)undoStack.shift();redoStack=[];}
+  function applyTool(tool) {currentTool=tool;document.querySelectorAll('.tool').forEach(b=>b.classList.toggle('active',b.dataset.tool===tool));}
+  function buildToolbar() {
+    const bar=$('toolbar'), options=$('toolOptions');
+    const descriptions={select:'Select a tool without drawing.',pen:'Draw smooth freehand lines.',pencil:'Draw a lighter, sketch-like line.',brush:'Paint with a thicker soft stroke.',fill:'Fill a connected area with the chosen color.',eyedropper:'Pick a color from the artwork.',eraser:'Erase pixels from the current frame.',line:'Draw a straight line.',rectangle:'Draw a rectangle outline.',ellipse:'Draw an oval outline.',text:'Place text on the current frame.'};
+    tools.forEach(([id,icon,label])=>{const b=document.createElement('button');b.className='tool'+(id==='pen'?' active':'');b.dataset.tool=id;b.title=label;b.dataset.tooltip=descriptions[id];b.setAttribute('aria-label',label);b.innerHTML=`<span>${icon}</span>`;b.onclick=()=>applyTool(id);bar.append(b)});
+    const sep=()=>{const e=document.createElement('span');e.className='tool-sep';options.append(e)};
+    const sw=document.createElement('label');sw.className='color-swatch';sw.title='Stroke color';sw.innerHTML='<input type="color" id="strokeColor" aria-label="Stroke color" value="#313b2d">';sw.querySelector('input').oninput=e=>{color=e.target.value};options.append(sw);
+    ['#313b2d','#d77a68','#e4b653','#7899bd','#8ca875','#aa85a9','#ffffff'].forEach(c=>{const d=document.createElement('button');d.className='palette-dot';d.style.cssText=`background:${c};width:16px;height:16px;border-radius:50%;border:1px solid #0001;flex:none`;d.title=c;d.setAttribute('aria-label',`Set stroke color ${c}`);d.onclick=()=>{color=c;sw.querySelector('input').value=c};options.append(d)});
+    sep();const size=document.createElement('input');size.type='range';size.className='size-slider';size.min=1;size.max=80;size.value=8;size.title='Brush size';size.setAttribute('aria-label','Brush size');size.oninput=()=>{$('brushSize').value=size.value;updateBrush()};options.append(size);
+    const gradient=document.createElement('select');gradient.className='tool-select';gradient.setAttribute('aria-label','Stroke style');gradient.innerHTML='<option value="solid">Solid stroke</option><option value="linear">Gradient stroke</option>';gradient.id='strokeStyle';options.append(gradient);
+  }
+  function updateBrush() {brushSize=Number($('brushSize').value);$('brushValue').textContent=`${brushSize} px`;const range=document.querySelector('.size-slider');if(range)range.value=brushSize;brushOpacity=Number($('brushOpacity').value)/100;smoothing=Number($('smoothing').value)/100;$('brushOpacityValue').textContent=`${Math.round(brushOpacity*100)}%`; $('smoothingValue').textContent=`${$('smoothing').value}%`}
+  function pointerPoint(e) {const rect=draw.getBoundingClientRect();return{x:(e.clientX-rect.left)*draw.width/rect.width,y:(e.clientY-rect.top)*draw.height/rect.height}}
+  function brushColor() {if($('strokeStyle')?.value==='linear'){const g=ctx.createLinearGradient(0,0,draw.width,draw.height);g.addColorStop(0,color);g.addColorStop(1,$('gradientColor').value);return g}return color}
+  function floodFill(x,y,hex,tolerance=24) {
+    const image=ctx.getImageData(0,0,draw.width,draw.height),data=image.data,width=draw.width,height=draw.height;
+    x=Math.max(0,Math.min(width-1,Math.floor(x)));y=Math.max(0,Math.min(height-1,Math.floor(y)));
+    const seed=(y*width+x)*4,target=[data[seed],data[seed+1],data[seed+2],data[seed+3]],fill=[parseInt(hex.slice(1,3),16),parseInt(hex.slice(3,5),16),parseInt(hex.slice(5,7),16),Math.round(brushOpacity*255)];
+    if(target.every((value,i)=>value===fill[i]))return false;
+    const matches=index=>Math.abs(data[index]-target[0])<=tolerance&&Math.abs(data[index+1]-target[1])<=tolerance&&Math.abs(data[index+2]-target[2])<=tolerance&&Math.abs(data[index+3]-target[3])<=tolerance;
+    const stack=[[x,y]];
+    while(stack.length){
+      const [sx,sy]=stack.pop();let px=sx;
+      while(px>=0&&matches((sy*width+px)*4))px--;
+      px++;let spanAbove=false,spanBelow=false;
+      while(px<width&&matches((sy*width+px)*4)){
+        const index=(sy*width+px)*4;data[index]=fill[0];data[index+1]=fill[1];data[index+2]=fill[2];data[index+3]=fill[3];
+        if(sy>0){const above=(sy-1)*width+px;if(matches(above*4)){if(!spanAbove)stack.push([px,sy-1]);spanAbove=true}else spanAbove=false}
+        if(sy<height-1){const below=(sy+1)*width+px;if(matches(below*4)){if(!spanBelow)stack.push([px,sy+1]);spanBelow=true}else spanBelow=false}
+        px++;
+      }
+    }
+    ctx.putImageData(image,0,0);return true;
+  }
+  function beginDraw(e) {
+    if(currentTool==='select')return;
+    const point=pointerPoint(e);
+    if(currentTool==='eyedropper'){const pixel=ctx.getImageData(Math.floor(point.x),Math.floor(point.y),1,1).data;color=`#${[pixel[0],pixel[1],pixel[2]].map(value=>value.toString(16).padStart(2,'0')).join('')}`;$('strokeColor').value=color;applyTool('pen');return}
+    if(currentTool==='fill'){snapshot();if(floodFill(point.x,point.y,color))commitDraw();return}
+    drawing=true;startPoint=point;lastPoint=point;draw.setPointerCapture(e.pointerId);snapshot();
+    if(['line','rectangle','ellipse'].includes(currentTool))shapeBase=ctx.getImageData(0,0,draw.width,draw.height);
+    if(currentTool==='text'){drawing=false;const text=prompt('Type your text:');if(text){ctx.save();ctx.globalAlpha=brushOpacity;ctx.fillStyle=color;ctx.font=`${Math.max(24,brushSize*8)}px "DM Sans", sans-serif`;ctx.fillText(text,point.x,point.y);ctx.restore();commitDraw()}return}
+    if(currentTool==='pen'||currentTool==='pencil'||currentTool==='brush'||currentTool==='eraser'){ctx.save();ctx.beginPath();ctx.moveTo(point.x,point.y);ctx.lineCap='round';ctx.lineJoin='round';ctx.lineWidth=currentTool==='pencil'?Math.max(1,brushSize*.55):currentTool==='brush'?brushSize*1.8:brushSize;ctx.globalAlpha=currentTool==='pencil'?brushOpacity*.72:brushOpacity;if(currentTool==='eraser'){ctx.globalCompositeOperation='destination-out'}else ctx.strokeStyle=brushColor();ctx.restore()}
+  }
+  function moveDraw(e) {
+    if(!drawing)return;const point=pointerPoint(e);
+    if(['pen','pencil','brush','eraser'].includes(currentTool)){ctx.save();ctx.beginPath();ctx.moveTo(lastPoint.x,lastPoint.y);if(smoothing>0){const midX=lastPoint.x+(point.x-lastPoint.x)*(1-smoothing/2),midY=lastPoint.y+(point.y-lastPoint.y)*(1-smoothing/2);ctx.quadraticCurveTo(lastPoint.x,lastPoint.y,midX,midY)}else ctx.lineTo(point.x,point.y);ctx.lineCap='round';ctx.lineJoin='round';ctx.lineWidth=currentTool==='pencil'?Math.max(1,brushSize*.55):currentTool==='brush'?brushSize*1.8:brushSize;ctx.globalAlpha=currentTool==='pencil'?brushOpacity*.72:brushOpacity;if(currentTool==='eraser')ctx.globalCompositeOperation='destination-out';else ctx.strokeStyle=brushColor();ctx.stroke();ctx.restore();lastPoint=point;return}
+    drawPreview(point);
+  }
+  function drawPreview(point) {if(currentTool==='line'||currentTool==='rectangle'||currentTool==='ellipse'){ctx.putImageData(shapeBase,0,0);ctx.save();ctx.globalAlpha=brushOpacity;ctx.strokeStyle=brushColor();ctx.lineWidth=brushSize;ctx.beginPath();if(currentTool==='line'){ctx.moveTo(startPoint.x,startPoint.y);ctx.lineTo(point.x,point.y)}else if(currentTool==='rectangle'){ctx.rect(startPoint.x,startPoint.y,point.x-startPoint.x,point.y-startPoint.y)}else ctx.ellipse((startPoint.x+point.x)/2,(startPoint.y+point.y)/2,Math.abs(point.x-startPoint.x)/2,Math.abs(point.y-startPoint.y)/2,0,0,Math.PI*2);ctx.stroke();ctx.restore()}}
+  function endDraw(e) {if(!drawing)return;const point=pointerPoint(e);if(['line','rectangle','ellipse'].includes(currentTool)){ctx.putImageData(shapeBase,0,0);ctx.save();ctx.globalAlpha=brushOpacity;ctx.strokeStyle=brushColor();ctx.lineWidth=brushSize;ctx.beginPath();if(currentTool==='line'){ctx.moveTo(startPoint.x,startPoint.y);ctx.lineTo(point.x,point.y)}else if(currentTool==='rectangle'){ctx.rect(startPoint.x,startPoint.y,point.x-startPoint.x,point.y-startPoint.y)}else ctx.ellipse((startPoint.x+point.x)/2,(startPoint.y+point.y)/2,Math.abs(point.x-startPoint.x)/2,Math.abs(point.y-startPoint.y)/2,0,0,Math.PI*2);ctx.stroke();ctx.restore();shapeBase=null}drawing=false;commitDraw()}
+  function commitDraw() {const p=project();if(!p)return;p.frames[currentFrame].image=draw.toDataURL('image/png');persist();renderTimeline()}
+  function restoreUndo(source,target) {if(!source.length)return;target.push(draw.toDataURL('image/png'));const data=source.pop();loadImage(data,img=>{ctx.clearRect(0,0,draw.width,draw.height);ctx.drawImage(img,0,0);const p=project();if(p){p.frames[currentFrame].image=draw.toDataURL('image/png');persist();renderTimeline()}})}
+  function addFrame(copy=false) {saveFrame();const p=project();if(!p)return;const data=copy?p.frames[currentFrame].image:blankFrame();p.frames.splice(currentFrame+1,0,{image:data,duration:1});persist();renderFrame(currentFrame+1);showToast(copy?'Frame duplicated':'New frame added')}
+  function removeFrame() {const p=project();if(!p)return;if(p.frames.length<=1){showToast('Keep at least one frame in your animation.');return}saveFrame();p.frames.splice(currentFrame,1);currentFrame=Math.min(currentFrame,p.frames.length-1);undoStack=[];redoStack=[];lastRenderedFrame=-1;persist();renderFrame(currentFrame);showToast('Frame deleted')}
+  function createProject(name) {const p=newProject(name.trim()||'Untitled project');projects.push(p);persist();currentId=p.id;currentFrame=0;renderProjects();renderFrame(0);$('projectModal').classList.remove('open');showToast('Your new project is ready.')}
+  function openNewProject() {$('modalTitle').textContent='New project';$('modalDescription').textContent='Give your next idea a name and start animating.';$('projectNameInput').value='';$('confirmModal').textContent='Create project';$('projectModal').classList.add('open');$('projectNameInput').focus()}
+  function openCombine() {const p=projects.filter(x=>x.id!==currentId);const list=$('combineChoices');list.replaceChildren();if(!p.length){const e=document.createElement('div');e.className='empty-projects';e.textContent='Create another project first to combine animations.';list.append(e)}else p.forEach(x=>{const label=document.createElement('label');label.className='project-choice';label.innerHTML='<input type="checkbox"><span></span>';label.children[1].textContent=`${x.name} · ${x.frames.length} frames`;label.dataset.id=x.id;list.append(label)});$('combineModal').classList.add('open')}
+  function combineSelected() {const selected=[...$('combineChoices').querySelectorAll('input:checked')].map(i=>projects.find(p=>p.id===i.closest('.project-choice').dataset.id)).filter(Boolean);if(!selected.length){showToast('Select at least one project to combine.');return}saveFrame();const merged=newProject(`${project().name} + projects`);merged.fps=project().fps;merged.frames=[...project().frames.map(f=>({...f})),...selected.flatMap(p=>p.frames.map(f=>({...f})))];projects.push(merged);currentId=merged.id;currentFrame=0;persist();renderProjects();renderFrame(0);$('combineModal').classList.remove('open');showToast(`Combined ${selected.length+1} projects into a new animation.`)}
+  function exportProject() {saveFrame();const blob=new Blob([JSON.stringify(project(),null,2)],{type:'application/json'});download(blob,`${safeName(project().name)}.motion.json`);showToast('Project file downloaded.')}
+  function safeName(name) {return name.replace(/[<>:"/\\|?*\x00-\x1f]/g,'-').trim().replace(/\s+/g,'-')||'animation'}
+  function download(blob,name) {const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+  function importProject(file) {if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const p=JSON.parse(reader.result);if(!p.name||!Array.isArray(p.frames)||!p.frames.length||p.frames.some(f=>typeof f.image!=='string'))throw new Error('Invalid project format');p.id=crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random());p.fps=Math.max(1,Math.min(60,Number(p.fps)||12));projects.push(p);persist();currentId=p.id;currentFrame=0;renderProjects();renderFrame(0);showToast('Project imported.')}catch(error){console.error('Project import failed',error);showToast('That project file could not be opened.')}};reader.onerror=()=>showToast('Could not read the selected project file.');reader.readAsText(file)}
+  function applyRasterEffects(context,settings) {
+    const effects=settings.effects||[],amount=(settings.effectIntensity??55)/100;
+    if(amount<=0)return;
+    if(effects.includes('pixelate')){
+      const width=Math.max(8,Math.round(context.canvas.width*(1-amount*.92))),height=Math.max(8,Math.round(context.canvas.height*(1-amount*.92)));
+      const pixelCanvas=document.createElement('canvas');pixelCanvas.width=width;pixelCanvas.height=height;
+      const pixelContext=pixelCanvas.getContext('2d');pixelContext.drawImage(context.canvas,0,0,width,height);
+      context.clearRect(0,0,context.canvas.width,context.canvas.height);context.imageSmoothingEnabled=false;
+      context.drawImage(pixelCanvas,0,0,context.canvas.width,context.canvas.height);context.imageSmoothingEnabled=true;
+    }
+    if(effects.includes('vignette')){
+      const {width,height}=context.canvas,gradient=context.createRadialGradient(width/2,height/2,Math.min(width,height)*.18,width/2,height/2,Math.hypot(width,height)*.62);
+      gradient.addColorStop(0,'rgba(0,0,0,0)');gradient.addColorStop(1,`rgba(0,0,0,${amount*.8})`);
+      context.fillStyle=gradient;context.fillRect(0,0,width,height);
+    }
+    if(effects.includes('filmGrain')){
+      const tile=document.createElement('canvas');tile.width=tile.height=96;
+      const tileContext=tile.getContext('2d'),noise=tileContext.createImageData(tile.width,tile.height);
+      for(let i=0;i<noise.data.length;i+=4){const shade=Math.random()<.5?0:255;noise.data[i]=noise.data[i+1]=noise.data[i+2]=shade;noise.data[i+3]=255}
+      tileContext.putImageData(noise,0,0);
+      const pattern=context.createPattern(tile,'repeat');context.save();context.globalAlpha=amount*.18;context.globalCompositeOperation='soft-light';
+      if(pattern){context.fillStyle=pattern;context.fillRect(0,0,context.canvas.width,context.canvas.height)}context.restore();
+    }
+  }
+  function renderToCanvas(index,canvas,blendTo=null,blend=0) {
+    return new Promise((resolve,reject)=>{
+      const p=project();if(!p){reject(new Error('No active animation project'));return}
+      const load=data=>new Promise((res,rej)=>{const image=new Image();image.onload=()=>res(image);image.onerror=()=>rej(new Error('Could not load a frame for rendering'));image.src=data});
+      const settings=animationSettings(p),start=Math.min(settings.startFrame-1,p.frames.length-1),end=Math.min(settings.endFrame-1,p.frames.length-1);
+      const isShapeTween=settings.type==='shape'&&index>=start&&index<=end;
+      Promise.all([load(p.frames[index].image),blendTo===null?Promise.resolve(null):load(p.frames[blendTo].image),isShapeTween?load(p.frames[start].image):Promise.resolve(null),isShapeTween?load(p.frames[end].image):Promise.resolve(null)])
+        .then(([image,nextImage,shapeStart,shapeEnd])=>{
+          const c=canvas.getContext('2d'),mode=p.backgroundMode||'white',first=p.backgroundColor||'#ffffff',second=p.gradientColor||'#dbe9bf';
+          c.setTransform(1,0,0,1,0,0);c.globalAlpha=1;c.globalCompositeOperation='source-over';c.filter='none';c.clearRect(0,0,canvas.width,canvas.height);
+          if(mode==='white'||mode==='solid'||mode==='linear'||mode==='radial'){
+            let fill=mode==='white'?'#fff':first;
+            if(mode==='linear'){fill=c.createLinearGradient(0,0,canvas.width,canvas.height);fill.addColorStop(0,first);fill.addColorStop(1,second)}
+            if(mode==='radial'){fill=c.createRadialGradient(canvas.width/2,canvas.height/2,10,canvas.width/2,canvas.height/2,canvas.width*.65);fill.addColorStop(0,first);fill.addColorStop(1,second)}
+            c.fillStyle=fill;c.fillRect(0,0,canvas.width,canvas.height);
+          }
+          const values=animatedValues(index,p),blendMode=settings.blendMode||'source-over';
+          const drawAnimated=(source,frame,alpha=1,applyTween=true)=>{
+            const transform=applyTween?animatedValues(frame,p):animationValueDefaults;
+            const filterParts=[visualFilter()];
+            if(applyTween&&transform.brightness)filterParts.push(`brightness(${Math.max(0,1+transform.brightness/100)})`);
+            if(applyTween&&transform.tint)filterParts.push(`hue-rotate(${transform.tint}deg)`);
+            c.save();c.globalCompositeOperation=blendMode;c.globalAlpha=alpha*(transform.alpha/100);c.filter=filterParts.join(' ');
+            const mask=settings.mask||'none',maskProgress=Math.max(0,Math.min(1,animationProgress(frame,p)));
+            if(mask!=='none'){
+              c.beginPath();
+              if(mask==='wipeLeft')c.rect(0,0,canvas.width*maskProgress,canvas.height);
+              else if(mask==='wipeRight')c.rect(canvas.width*(1-maskProgress),0,canvas.width*maskProgress,canvas.height);
+              else if(mask==='wipeUp')c.rect(0,canvas.height*(1-maskProgress),canvas.width,canvas.height*maskProgress);
+              else if(mask==='wipeDown')c.rect(0,0,canvas.width,canvas.height*maskProgress);
+              else if(mask==='spotlight')c.arc(canvas.width/2,canvas.height/2,Math.sqrt(maskProgress)*Math.hypot(canvas.width,canvas.height)/2,0,Math.PI*2);
+              c.clip();
+            }
+            c.translate(canvas.width/2+transform.x*canvas.width/p.width,canvas.height/2+transform.y*canvas.height/p.height);
+            c.rotate(transform.rotation*Math.PI/180);
+            const tiltX=transform.rotateX*Math.PI/180,tiltY=transform.rotateY*Math.PI/180;
+            c.transform(Math.cos(tiltY),Math.sin(tiltX)*.35,Math.sin(tiltY)*.35,Math.cos(tiltX),0,0);
+            c.transform(1,Math.tan(transform.skewY*Math.PI/180),Math.tan(transform.skewX*Math.PI/180),1,0,0);
+            c.scale(transform.scaleX/100,transform.scaleY/100);c.drawImage(source,-canvas.width/2,-canvas.height/2,canvas.width,canvas.height);c.restore();
+          };
+          if(blendTo!==null){
+            if(p.transition==='Crossfade'){drawAnimated(image,index,1-blend);drawAnimated(nextImage,blendTo,blend)}
+            else{drawAnimated(image,index,1-blend);c.save();c.globalCompositeOperation='source-over';c.globalAlpha=blend;c.fillStyle=p.transition==='Fade to black'?'#000':'#fff';c.fillRect(0,0,canvas.width,canvas.height);c.restore()}
+          }else if(isShapeTween){
+            const t=animationProgress(index,settings);drawAnimated(shapeStart,start,1-t,false);drawAnimated(shapeEnd,end,t,false);
+          }else drawAnimated(image,index,1);
+          c.setTransform(1,0,0,1,0,0);c.globalAlpha=1;c.globalCompositeOperation='source-over';c.filter='none';applyRasterEffects(c,p);resolve();
+        }).catch(reject);
+    });
+  }
+  async function exportVideo() {const p=project();if(!p)return;saveFrame();if(!window.MediaRecorder||!art.captureStream){showToast('Video export is not supported by this browser.');return}try{const c=document.createElement('canvas');c.width=p.width;c.height=p.height;const stream=c.captureStream(p.fps);const mime=['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'].find(t=>MediaRecorder.isTypeSupported(t));if(!mime){showToast('This browser cannot encode a WebM video.');return}const recorder=new MediaRecorder(stream,{mimeType:mime});const chunks=[];recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};recorder.onstop=()=>{download(new Blob(chunks,{type:mime}),`${safeName(p.name)}.webm`);stream.getTracks().forEach(t=>t.stop());showToast('Your animation video is ready.')};recorder.start();const delay=()=>new Promise(r=>setTimeout(r,1000/p.fps));for(let i=0;i<p.frames.length;i++){await renderToCanvas(i,c);await delay();if(i<p.frames.length-1&&p.transition!=='Cut'){const steps=Math.max(2,Math.min(24,Number(p.transitionDuration)||6));for(let step=1;step<=steps;step++){await renderToCanvas(i,c,i+1,step/steps);await delay()}}}recorder.stop()}catch(error){console.error('Video export failed',error);showToast('Video export failed. Please try again.')} }
+  async function startPlayback() {if(playback){playback=false;clearTimeout(playbackTimer);$('playBtn').textContent='▶';renderFrame(currentFrame);return}saveFrame();playback=true;$('playBtn').textContent='Ⅱ';const p=project();const delay=()=>new Promise(resolve=>{playbackTimer=setTimeout(resolve,1000/p.fps)});const cycle=async()=>{if(!playback)return;currentFrame=(currentFrame+1)%p.frames.length;await renderToCanvas(currentFrame,art);ctx.clearRect(0,0,draw.width,draw.height);onionCtx.clearRect(0,0,onion.width,onion.height);$('stageFrameNum').textContent=String(currentFrame+1).padStart(2,'0');renderTimeline();await delay();if(playback&&currentFrame<p.frames.length-1&&p.transition!=='Cut'){const steps=Math.max(2,Math.min(24,Number(p.transitionDuration)||6));for(let step=1;step<=steps&&playback;step++){await renderToCanvas(currentFrame,art,currentFrame+1,step/steps);await delay()}}if(playback)cycle()};cycle()}
+  draw.addEventListener('pointerdown',beginDraw);draw.addEventListener('pointermove',moveDraw);draw.addEventListener('pointerup',endDraw);draw.addEventListener('pointercancel',endDraw);
+  $('frameTrack').addEventListener('scroll',()=>{$('layerTrackCells').scrollLeft=$('frameTrack').scrollLeft});
+  $('newProjectBtn').onclick=openNewProject;$('confirmModal').onclick=()=>createProject($('projectNameInput').value);$('cancelModal').onclick=()=>$('projectModal').classList.remove('open');$('projectNameInput').addEventListener('keydown',e=>{if(e.key==='Enter')createProject($('projectNameInput').value)});
+  $('combineBtn').onclick=openCombine;$('cancelCombine').onclick=()=>$('combineModal').classList.remove('open');$('confirmCombine').onclick=combineSelected;
+  $('exportProjectBtn').onclick=exportProject;$('importProjectBtn').onclick=()=>$('importFile').click();$('importFile').onchange=e=>{importProject(e.target.files[0]);e.target.value=''};
+  $('exportVideoBtn').onclick=exportVideo;$('playBtn').onclick=startPlayback;
+  $('previousFrame').onclick=()=>{saveFrame();renderFrame(Math.max(0,currentFrame-1))};$('nextFrame').onclick=()=>{saveFrame();renderFrame(Math.min(project().frames.length-1,currentFrame+1))};$('duplicateFrame').onclick=()=>addFrame(true);$('deleteFrame').onclick=removeFrame;
+  const menuActions={newProject:()=>$('newProjectBtn').click(),importProject:()=>$('importProjectBtn').click(),exportProject:()=>$('exportProjectBtn').click(),exportVideo:()=>$('exportVideoBtn').click(),undo:()=>$('undoBtn').click(),redo:()=>$('redoBtn').click(),duplicateFrame:()=>$('duplicateFrame').click(),deleteFrame:()=>$('deleteFrame').click(),toggleOnion:()=>{$('onionToggle').checked=!$('onionToggle').checked;$('onionToggle').dispatchEvent(new Event('change'))},zoomIn:()=>$('zoomIn').click(),zoomOut:()=>$('zoomOut').click(),fullscreen:()=>$('fullscreenBtn').click(),previousFrame:()=>$('previousFrame').click(),play:()=>$('playBtn').click(),nextFrame:()=>$('nextFrame').click()};
+  document.querySelectorAll('[data-menu-action]').forEach(button=>button.addEventListener('click',()=>{menuActions[button.dataset.menuAction]();button.closest('details').open=false}));
+  $('undoBtn').onclick=()=>restoreUndo(undoStack,redoStack);$('redoBtn').onclick=()=>restoreUndo(redoStack,undoStack);
+  $('brushSize').oninput=updateBrush;$('brushOpacity').oninput=updateBrush;$('smoothing').oninput=updateBrush;
+  $('onionToggle').onchange=()=>{saveFrame();renderFrame(currentFrame)};$('onionOpacity').oninput=()=>{$('onionValue').textContent=`${$('onionOpacity').value}%`;renderFrame(currentFrame)};
+  $('fpsInput').onchange=()=>{project().fps=Math.max(1,Math.min(60,Number($('fpsInput').value)||12));persist();renderFrame(currentFrame)};
+  $('backgroundMode').onchange=()=>{project().backgroundMode=$('backgroundMode').value;saveFrame();renderFrame(currentFrame)};
+  $('backgroundColor').oninput=()=>{project().backgroundColor=$('backgroundColor').value;saveFrame();renderFrame(currentFrame)};
+  $('gradientColor').oninput=()=>{project().gradientColor=$('gradientColor').value;saveFrame();renderFrame(currentFrame)};
+  document.querySelectorAll('[data-grade]').forEach(input=>{input.oninput=()=>{const p=project();const name=input.dataset.grade;const value=Number(input.value);p.gradeSettings={...gradeSettings(p), [name]:value};input.nextElementSibling.textContent=displayGradeValue(name,value);persist();applyPreviewEffects();renderFrame(currentFrame);};});
+  $('resetGrade').onclick=()=>{const p=project();p.gradeSettings={...gradeDefaults};persist();syncGradeControls(p);applyPreviewEffects();renderFrame(currentFrame);};
+  $('transitionSelect').onchange=()=>{project().transition=$('transitionSelect').value;persist();applyPreviewEffects();renderFrame(currentFrame)};
+  $('tweenType').onchange=()=>{updateAnimationSettings({type:$('tweenType').value});showToast(`${$('tweenType').selectedOptions[0].text} selected for playback and export.`)};
+  $('motionPreset').onchange=()=>{
+    const preset=$('motionPreset').value,definition=animationPresets[preset];
+    if(!definition){updateAnimationSettings({preset,fromValues:{...animationValueDefaults},values:{...animationValueDefaults}});syncAnimationControls();return}
+    const patch={preset,type:'motion',ease:definition.ease||$('tweenEase').value,fromValues:{...animationValueDefaults,...(definition.from||{})},values:{...animationValueDefaults,...(definition.to||{})}};
+    updateAnimationSettings({...patch,startFrame:1,endFrame:project().frames.length});syncAnimationControls();showToast(`${$('motionPreset').selectedOptions[0].text} animation applied.`);
+  };
+  $('tweenEase').onchange=()=>updateAnimationSettings({ease:$('tweenEase').value});
+  $('rotationDirection').onchange=()=>updateAnimationSettings({rotationDirection:$('rotationDirection').value});
+  $('rotationCount').onchange=()=>updateAnimationSettings({rotationCount:$('rotationCount').value});
+  $('blendMode').onchange=()=>{updateAnimationSettings({blendMode:$('blendMode').value});applyPreviewEffects()};
+  $('maskMode').onchange=()=>{updateAnimationSettings({mask:$('maskMode').value});renderFrame(currentFrame);showToast(`${$('maskMode').selectedOptions[0].text} mask selected for playback and export.`)};
+  $('tweenStartFrame').onchange=()=>{
+    const p=project(),start=Math.max(1,Math.min(p.frames.length,Number($('tweenStartFrame').value)||1)),end=Math.max(start,Math.min(p.frames.length,Number($('tweenEndFrame').value)||p.frames.length));
+    $('tweenStartFrame').value=start;$('tweenEndFrame').value=end;updateAnimationSettings({startFrame:start,endFrame:end});
+  };
+  $('tweenEndFrame').onchange=()=>{
+    const p=project(),end=Math.max(1,Math.min(p.frames.length,Number($('tweenEndFrame').value)||p.frames.length)),start=Math.min(end,Math.max(1,Number($('tweenStartFrame').value)||1));
+    $('tweenStartFrame').value=start;$('tweenEndFrame').value=end;updateAnimationSettings({startFrame:start,endFrame:end});
+  };
+  document.querySelectorAll('[data-anim-end]').forEach(input=>input.oninput=()=>{
+    const settings=animationSettings(),key=input.dataset.animEnd,value=Number(input.value);
+    updateAnimationSettings({preset:'custom',values:{[key]:value}});
+    $('motionPreset').value='custom';updateAnimationValueLabels();
+  });
+  $('transitionDuration').oninput=()=>{$('transitionDurationValue').textContent=`${$('transitionDuration').value} frames`;const p=project();p.transitionDuration=Number($('transitionDuration').value);persist();};
+  $('effectIntensity').oninput=()=>{$('effectIntensityValue').textContent=`${$('effectIntensity').value}%`;const p=project();p.effectIntensity=Number($('effectIntensity').value);persist();applyPreviewEffects();renderFrame(currentFrame);};
+  document.querySelectorAll('.effect-chip').forEach(button=>{button.onclick=()=>{const p=project();const effect=button.dataset.effect;const list=p.effects||[];const active=list.includes(effect);p.effects=active?list.filter(item=>item!==effect):[...list,effect];button.setAttribute('aria-pressed',String(!active));persist();applyPreviewEffects();renderFrame(currentFrame);showToast(active?`${effectNames[effect]} removed`:`${effectNames[effect]} applied`);}});
+  $('clearFrameBtn').onclick=()=>{if(confirm('Clear the drawing on this frame?')){snapshot();ctx.clearRect(0,0,draw.width,draw.height);commitDraw()}};
+  $('addTextBtn').onclick=()=>{applyTool('text');showToast('Click on the canvas to place text.')};
+  $('zoomIn').onclick=()=>{zoom=Math.min(160,zoom+10);$('zoomLabel').textContent=`${zoom}%`;$('canvasWrap').style.width=`${zoom}%`};
+  $('zoomOut').onclick=()=>{zoom=Math.max(50,zoom-10);$('zoomLabel').textContent=`${zoom}%`;$('canvasWrap').style.width=`${zoom}%`};
+  $('fullscreenBtn').onclick=()=>{const stage=$('stage');if(!document.fullscreenElement)stage.requestFullscreen?.();else document.exitFullscreen?.()};
+  document.addEventListener('keydown',e=>{if(e.target.matches('input,select,textarea')||!$('studioApp').classList.contains('authenticated'))return;if(e.code==='Space'){e.preventDefault();startPlayback()}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='n'){e.preventDefault();openNewProject()}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'){e.preventDefault();saveFrame();showToast('Project saved')}if((e.ctrlKey||e.metaKey)&&(e.key.toLowerCase()==='y'||(e.key.toLowerCase()==='z'&&e.shiftKey))){e.preventDefault();restoreUndo(redoStack,undoStack)}else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();restoreUndo(undoStack,redoStack)}if(e.key==='[')renderFrame(Math.max(0,currentFrame-1));if(e.key===']')renderFrame(Math.min(project().frames.length-1,currentFrame+1))});
+  $('authForm').addEventListener('submit',submitEmailAuth);
+  $('authModeToggle').onclick=toggleAuthMode;
+  $('forgotPasswordBtn').onclick=sendPasswordReset;
+  document.querySelectorAll('.social-button').forEach(button=>button.addEventListener('click',()=>signInWithProvider(button.dataset.provider)));
+  $('signOutBtn').onclick=async()=>{
+    if(!firebaseAuth)return;
+    $('signOutBtn').disabled=true;
+    try{await firebaseAuth.signOut();currentUser=null;projects=[];currentId='';$('studioApp').classList.remove('authenticated');$('loginPage').hidden=false;$('accountEmail').textContent='';clearLoginMessage();setLoginMessage('You have signed out. Your projects remain saved on this device.','success')}
+    catch(error){console.error('Sign out failed',error);showToast(`Could not sign out: ${error.message}`)}
+    finally{$('signOutBtn').disabled=false}
+  };
+  buildToolbar();bootstrapAuth();
+})();
+</script>
+</body>
+</html>
