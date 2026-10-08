@@ -174,6 +174,21 @@
     .editor-tooltip{position:fixed;z-index:10000;max-width:230px;padding:6px 9px;border:1px solid #565760;border-radius:5px;background:#1f2025;color:#f4f4f6;font:11px/1.35 'DM Sans',sans-serif;box-shadow:0 5px 16px #0005;pointer-events:none;opacity:0;transform:translateY(3px);transition:opacity .12s ease,transform .12s ease}
     .editor-tooltip.visible{opacity:1;transform:translateY(0)}
     @media(max-width:680px){#studioApp .workspace{padding:0}#studioApp .inspector{display:flex;flex-direction:column;gap:0}#studioApp .inspector-head{flex:none}#studioApp details.panel[open]>:not(summary){margin-left:10px;margin-right:10px}}
+    .export-modal{width:min(560px,100%);max-height:min(90vh,760px);overflow:auto}
+    .export-modal-header{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .export-modal-close{border:0;background:transparent;font-size:20px;color:#777;line-height:1}
+    .export-choice{border:1px solid #e7e4ef;border-radius:10px;padding:13px;margin:10px 0}
+    .export-choice h3{font:700 13px Manrope,sans-serif;margin:0 0 4px}
+    .export-choice p{margin:0 0 10px}
+    .export-plans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}
+    .export-plan{border:1px solid #e4e1eb;border-radius:9px;background:#fff;padding:10px;text-align:left}
+    .export-plan:hover,.export-plan.selected{border-color:#8062df;background:#f7f4ff}
+    .export-plan strong,.export-plan span{display:block}
+    .export-plan strong{font:700 12px Manrope,sans-serif}
+    .export-plan span{font-size:10px;color:#777;margin-top:4px}
+    .export-plan-status{min-height:32px;padding:8px;border-radius:7px;background:#f5f3fb;color:#65578c;font-size:10px;line-height:1.45}
+    .export-checkout{width:100%;margin-top:9px}
+    @media(max-width:480px){.export-plans{grid-template-columns:1fr 1fr}.export-modal{padding:16px}}
   </style>
 </head>
 <body>
@@ -265,6 +280,21 @@
 <div class="toast" id="toast"></div>
 <div class="modal-backdrop" id="projectModal"><div class="modal"><h2 id="modalTitle">New project</h2><p id="modalDescription">Give your next idea a name and start animating.</p><input id="projectNameInput" placeholder="e.g. Little cloud's journey" maxlength="48"><div class="modal-actions"><button class="btn" id="cancelModal">Cancel</button><button class="btn primary" id="confirmModal">Create project</button></div></div></div>
 <div class="modal-backdrop" id="combineModal"><div class="modal"><h2>Combine projects</h2><p>Choose projects to append into a new animation, in the order shown.</p><div class="modal-projects" id="combineChoices"></div><div class="modal-actions"><button class="btn" id="cancelCombine">Cancel</button><button class="btn primary" id="confirmCombine">Combine selected</button></div></div></div>
+<div class="modal-backdrop" id="exportModal" role="dialog" aria-modal="true" aria-labelledby="exportModalTitle"><div class="modal export-modal">
+  <div class="export-modal-header"><div><h2 id="exportModalTitle">Export your animation</h2><p>Choose free export with a watermark or select a plan for watermark-free exports.</p></div><button type="button" class="export-modal-close" id="closeExportModal" aria-label="Close export options">×</button></div>
+  <div class="export-choice"><h3>Free export</h3><p>Download your <span id="exportKindLabel">project</span> with “Made with Meow Animates” in the top-right corner.</p><button type="button" class="btn primary" id="freeExportBtn">Export free with watermark</button></div>
+  <div class="export-choice"><h3>Watermark-free plans</h3><p>Select a plan. Checkout and payment verification are not connected yet; selecting a plan will not charge you or unlock paid exports.</p>
+    <div class="export-plans">
+      <button type="button" class="export-plan" data-plan="month"><strong>1 month</strong><span>₹100 / month · ₹100 total</span></button>
+      <button type="button" class="export-plan" data-plan="quarter"><strong>3 months</strong><span>₹80 / month · ₹240 total</span></button>
+      <button type="button" class="export-plan" data-plan="fiveMonths"><strong>5 months</strong><span>₹75 / month · ₹375 total</span></button>
+      <button type="button" class="export-plan" data-plan="year"><strong>12 months</strong><span>₹50 / month · ₹600 total</span></button>
+      <button type="button" class="export-plan" data-plan="lifetime"><strong>Lifetime</strong><span>₹1,000 one-time</span></button>
+    </div>
+    <div class="export-plan-status" id="exportPlanStatus" role="status" aria-live="polite">Choose a plan to see its status.</div>
+    <button type="button" class="btn export-checkout" id="exportCheckoutBtn" disabled>Continue to checkout (not set up)</button>
+  </div>
+</div></div>
 <input id="importFile" type="file" accept=".json,application/json" hidden>
 <script>
 (() => {
@@ -299,7 +329,7 @@
   }
   function installEditorTooltips() {
     const tooltip=document.createElement('div');tooltip.className='editor-tooltip';tooltip.setAttribute('role','tooltip');document.body.append(tooltip);
-    const buttonHelp={newProjectBtn:'Start a new animation project.',combineBtn:'Append frames from other projects into a new project.',exportProjectBtn:'Download this project as an editable project file.',importProjectBtn:'Open a project file from your device.',undoBtn:'Undo the last drawing change.',redoBtn:'Restore the change you just undid.',exportVideoBtn:'Render and download this animation as a video.',signOutBtn:'Sign out of your account.',clearFrameBtn:'Erase the current frame.',previousFrame:'Go to the previous frame.',playBtn:'Preview the animation from the beginning.',nextFrame:'Go to the next frame.',duplicateFrame:'Copy this frame to a new frame.',deleteFrame:'Delete this frame from the timeline.',fullscreenBtn:'Expand the stage to fullscreen.',zoomIn:'Make the stage appear larger.',zoomOut:'Make the stage appear smaller.',addTextBtn:'Choose the text tool, then click the stage to place text.',resetGrade:'Restore the default color grading.'};
+    const buttonHelp={newProjectBtn:'Start a new animation project.',combineBtn:'Append frames from other projects into a new project.',exportProjectBtn:'Choose free watermarked project export or view watermark-free plans.',importProjectBtn:'Open a project file from your device.',undoBtn:'Undo the last drawing change.',redoBtn:'Restore the change you just undid.',exportVideoBtn:'Choose free watermarked video export or view watermark-free plans.',signOutBtn:'Sign out of your account.',clearFrameBtn:'Erase the current frame.',previousFrame:'Go to the previous frame.',playBtn:'Preview the animation from the beginning.',nextFrame:'Go to the next frame.',duplicateFrame:'Copy this frame to a new frame.',deleteFrame:'Delete this frame from the timeline.',fullscreenBtn:'Expand the stage to fullscreen.',zoomIn:'Make the stage appear larger.',zoomOut:'Make the stage appear smaller.',addTextBtn:'Choose the text tool, then click the stage to place text.',resetGrade:'Restore the default color grading.'};
     let active=null,timer=0;
     const targetFor=element=>element?.closest('#studioApp button,#studioApp summary,#studioApp input,#studioApp select,#studioApp [role="button"],#studioApp .color-swatch');
     const labelFor=element=>{
@@ -665,7 +695,47 @@
   function openNewProject() {$('modalTitle').textContent='New project';$('modalDescription').textContent='Give your next idea a name and start animating.';$('projectNameInput').value='';$('confirmModal').textContent='Create project';$('projectModal').classList.add('open');$('projectNameInput').focus()}
   function openCombine() {const p=projects.filter(x=>x.id!==currentId);const list=$('combineChoices');list.replaceChildren();if(!p.length){const e=document.createElement('div');e.className='empty-projects';e.textContent='Create another project first to combine animations.';list.append(e)}else p.forEach(x=>{const label=document.createElement('label');label.className='project-choice';label.innerHTML='<input type="checkbox"><span></span>';label.children[1].textContent=`${x.name} · ${x.frames.length} frames`;label.dataset.id=x.id;list.append(label)});$('combineModal').classList.add('open')}
   function combineSelected() {const selected=[...$('combineChoices').querySelectorAll('input:checked')].map(i=>projects.find(p=>p.id===i.closest('.project-choice').dataset.id)).filter(Boolean);if(!selected.length){showToast('Select at least one project to combine.');return}saveFrame();const merged=newProject(`${project().name} + projects`);merged.fps=project().fps;merged.frames=[...project().frames.map(f=>({...f})),...selected.flatMap(p=>p.frames.map(f=>({...f})))];projects.push(merged);currentId=merged.id;currentFrame=0;persist();renderProjects();renderFrame(0);$('combineModal').classList.remove('open');showToast(`Combined ${selected.length+1} projects into a new animation.`)}
-  function exportProject() {saveFrame();const blob=new Blob([JSON.stringify(project(),null,2)],{type:'application/json'});download(blob,`${safeName(project().name)}.motion.json`);showToast('Project file downloaded.')}
+  let pendingExportKind='project',selectedExportPlan='';
+  const exportPlans={month:'1 month at ₹100/month (₹100 total)',quarter:'3 months at ₹80/month (₹240 total)',fiveMonths:'5 months at ₹75/month (₹375 total)',year:'12 months at ₹50/month (₹600 total)',lifetime:'Lifetime for a one-time payment of ₹1,000'};
+  function openExportOptions(kind) {
+    pendingExportKind=kind;selectedExportPlan='';
+    $('exportKindLabel').textContent=kind==='video'?'video':'project file';
+    $('freeExportBtn').textContent=kind==='video'?'Export video free with watermark':'Export project free with watermark';
+    $('exportPlanStatus').textContent='Choose a plan to see its status.';
+    $('exportCheckoutBtn').disabled=true;
+    document.querySelectorAll('.export-plan').forEach(button=>button.classList.remove('selected'));
+    $('exportModal').classList.add('open');
+  }
+  function applyWatermark(context) {
+    const {width,height}=context.canvas,fontSize=Math.max(16,Math.round(width*.022)),padding=Math.round(fontSize*.45),text='Made with Meow Animates';
+    context.save();context.font=`600 ${fontSize}px "DM Sans", sans-serif`;
+    const textWidth=context.measureText(text).width,boxWidth=textWidth+padding*2,boxHeight=fontSize+padding*2,x=width-padding-boxWidth,y=padding;
+    context.fillStyle='rgba(20,20,24,.72)';context.fillRect(x,y,boxWidth,boxHeight);
+    context.fillStyle='#fff';context.textBaseline='middle';context.fillText(text,x+padding,y+boxHeight/2);context.restore();
+  }
+  async function watermarkedProjectCopy(p) {
+    const frames=await Promise.all(p.frames.map(frame=>new Promise((resolve,reject)=>{
+      const image=new Image();image.onload=()=>{
+        try{const canvas=document.createElement('canvas');canvas.width=p.width;canvas.height=p.height;const context=canvas.getContext('2d');context.drawImage(image,0,0,canvas.width,canvas.height);applyWatermark(context);resolve({...frame,image:canvas.toDataURL('image/png')})}
+        catch(error){reject(error)}
+      };image.onerror=()=>reject(new Error('Could not prepare a project frame for watermarking'));image.src=frame.image;
+    })));
+    return {...p,frames};
+  }
+  async function performFreeExport() {
+    const p=project();if(!p)return;
+    $('freeExportBtn').disabled=true;
+    try{
+      if(pendingExportKind==='video'){
+        $('exportModal').classList.remove('open');await exportVideo(true);return;
+      }
+      saveFrame();const copy=await watermarkedProjectCopy(project());
+      const blob=new Blob([JSON.stringify(copy,null,2)],{type:'application/json'});
+      download(blob,`${safeName(copy.name)}.motion.json`);$('exportModal').classList.remove('open');showToast('Watermarked project file downloaded.');
+    }catch(error){console.error('Free export failed',error);showToast('Could not export this file. Please try again.')}
+    finally{$('freeExportBtn').disabled=false}
+  }
+  function exportProject() {openExportOptions('project')}
   function safeName(name) {return name.replace(/[<>:"/\\|?*\x00-\x1f]/g,'-').trim().replace(/\s+/g,'-')||'animation'}
   function download(blob,name) {const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
   function importProject(file) {if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const p=JSON.parse(reader.result);if(!p.name||!Array.isArray(p.frames)||!p.frames.length||p.frames.some(f=>typeof f.image!=='string'))throw new Error('Invalid project format');p.id=crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random());p.fps=Math.max(1,Math.min(60,Number(p.fps)||12));projects.push(p);persist();currentId=p.id;currentFrame=0;renderProjects();renderFrame(0);showToast('Project imported.')}catch(error){console.error('Project import failed',error);showToast('That project file could not be opened.')}};reader.onerror=()=>showToast('Could not read the selected project file.');reader.readAsText(file)}
@@ -693,7 +763,7 @@
       if(pattern){context.fillStyle=pattern;context.fillRect(0,0,context.canvas.width,context.canvas.height)}context.restore();
     }
   }
-  function renderToCanvas(index,canvas,blendTo=null,blend=0) {
+  function renderToCanvas(index,canvas,blendTo=null,blend=0,withWatermark=false) {
     return new Promise((resolve,reject)=>{
       const p=project();if(!p){reject(new Error('No active animation project'));return}
       const load=data=>new Promise((res,rej)=>{const image=new Image();image.onload=()=>res(image);image.onerror=()=>rej(new Error('Could not load a frame for rendering'));image.src=data});
@@ -739,7 +809,7 @@
           }else if(isShapeTween){
             const t=animationProgress(index,settings);drawAnimated(shapeStart,start,1-t,false);drawAnimated(shapeEnd,end,t,false);
           }else drawAnimated(image,index,1);
-          c.setTransform(1,0,0,1,0,0);c.globalAlpha=1;c.globalCompositeOperation='source-over';c.filter='none';applyRasterEffects(c,p);resolve();
+          c.setTransform(1,0,0,1,0,0);c.globalAlpha=1;c.globalCompositeOperation='source-over';c.filter='none';applyRasterEffects(c,p);if(withWatermark)applyWatermark(c);resolve();
         }).catch(reject);
     });
   }
@@ -762,14 +832,24 @@
       });
     },80);
   }
-  async function exportVideo() {const p=project();if(!p)return;clearAnimationPreview();saveFrame();if(!window.MediaRecorder||!art.captureStream){showToast('Video export is not supported by this browser.');return}try{const c=document.createElement('canvas');c.width=p.width;c.height=p.height;const stream=c.captureStream(p.fps);const mime=['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'].find(t=>MediaRecorder.isTypeSupported(t));if(!mime){showToast('This browser cannot encode a WebM video.');return}const recorder=new MediaRecorder(stream,{mimeType:mime});const chunks=[];recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};recorder.onstop=()=>{download(new Blob(chunks,{type:mime}),`${safeName(p.name)}.webm`);stream.getTracks().forEach(t=>t.stop());showToast('Your animation video is ready.')};recorder.start();const delay=()=>new Promise(r=>setTimeout(r,1000/p.fps));for(let i=0;i<p.frames.length;i++){await renderToCanvas(i,c);await delay();if(i<p.frames.length-1&&p.transition!=='Cut'){const steps=Math.max(2,Math.min(24,Number(p.transitionDuration)||6));for(let step=1;step<=steps;step++){await renderToCanvas(i,c,i+1,step/steps);await delay()}}}recorder.stop()}catch(error){console.error('Video export failed',error);showToast('Video export failed. Please try again.')} }
+  async function exportVideo(withWatermark=false) {const p=project();if(!p)return;clearAnimationPreview();saveFrame();if(!window.MediaRecorder||!art.captureStream){showToast('Video export is not supported by this browser.');return}try{const c=document.createElement('canvas');c.width=p.width;c.height=p.height;const stream=c.captureStream(p.fps);const mime=['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'].find(t=>MediaRecorder.isTypeSupported(t));if(!mime){showToast('This browser cannot encode a WebM video.');return}const recorder=new MediaRecorder(stream,{mimeType:mime});const chunks=[];recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};recorder.onstop=()=>{download(new Blob(chunks,{type:mime}),`${safeName(p.name)}.webm`);stream.getTracks().forEach(t=>t.stop());showToast(withWatermark?'Watermarked animation video is ready.':'Your animation video is ready.')};recorder.start();const delay=()=>new Promise(r=>setTimeout(r,1000/p.fps)),render=(index,next=null,blend=0)=>renderToCanvas(index,c,next,blend,withWatermark);for(let i=0;i<p.frames.length;i++){await render(i);await delay();if(i<p.frames.length-1&&p.transition!=='Cut'){const steps=Math.max(2,Math.min(24,Number(p.transitionDuration)||6));for(let step=1;step<=steps;step++){await render(i,i+1,step/steps);await delay()}}}recorder.stop()}catch(error){console.error('Video export failed',error);showToast('Video export failed. Please try again.')} }
   async function startPlayback() {if(playback){playback=false;clearTimeout(playbackTimer);$('playBtn').textContent='▶';renderFrame(currentFrame);return}clearAnimationPreview();saveFrame();playback=true;$('playBtn').textContent='Ⅱ';const p=project();const delay=()=>new Promise(resolve=>{playbackTimer=setTimeout(resolve,1000/p.fps)});const cycle=async()=>{if(!playback)return;currentFrame=(currentFrame+1)%p.frames.length;await renderToCanvas(currentFrame,art);ctx.clearRect(0,0,draw.width,draw.height);onionCtx.clearRect(0,0,onion.width,onion.height);$('stageFrameNum').textContent=String(currentFrame+1).padStart(2,'0');renderTimeline();await delay();if(playback&&currentFrame<p.frames.length-1&&p.transition!=='Cut'){const steps=Math.max(2,Math.min(24,Number(p.transitionDuration)||6));for(let step=1;step<=steps&&playback;step++){await renderToCanvas(currentFrame,art,currentFrame+1,step/steps);await delay()}}if(playback)cycle()};cycle()}
   draw.addEventListener('pointerdown',beginDraw);draw.addEventListener('pointermove',moveDraw);draw.addEventListener('pointerup',endDraw);draw.addEventListener('pointercancel',endDraw);
   $('frameTrack').addEventListener('scroll',()=>{$('layerTrackCells').scrollLeft=$('frameTrack').scrollLeft});
   $('newProjectBtn').onclick=openNewProject;$('confirmModal').onclick=()=>createProject($('projectNameInput').value);$('cancelModal').onclick=()=>$('projectModal').classList.remove('open');$('projectNameInput').addEventListener('keydown',e=>{if(e.key==='Enter')createProject($('projectNameInput').value)});
   $('combineBtn').onclick=openCombine;$('cancelCombine').onclick=()=>$('combineModal').classList.remove('open');$('confirmCombine').onclick=combineSelected;
   $('exportProjectBtn').onclick=exportProject;$('importProjectBtn').onclick=()=>$('importFile').click();$('importFile').onchange=e=>{importProject(e.target.files[0]);e.target.value=''};
-  $('exportVideoBtn').onclick=exportVideo;$('playBtn').onclick=startPlayback;
+  $('exportVideoBtn').onclick=()=>openExportOptions('video');$('freeExportBtn').onclick=performFreeExport;
+  $('closeExportModal').onclick=()=>$('exportModal').classList.remove('open');
+  $('exportModal').addEventListener('click',event=>{if(event.target===$('exportModal'))$('exportModal').classList.remove('open')});
+  document.querySelectorAll('.export-plan').forEach(button=>button.onclick=()=>{
+    selectedExportPlan=button.dataset.plan;
+    document.querySelectorAll('.export-plan').forEach(plan=>plan.classList.toggle('selected',plan===button));
+    $('exportPlanStatus').textContent=`Selected: ${exportPlans[selectedExportPlan]}. Checkout is not connected yet, so no payment will be taken and paid export remains locked.`;
+    $('exportCheckoutBtn').disabled=false;
+  });
+  $('exportCheckoutBtn').onclick=()=>{if(selectedExportPlan)showToast('Payment verification is not set up yet; no charge was made.')};
+  $('playBtn').onclick=startPlayback;
   $('previousFrame').onclick=()=>{saveFrame();renderFrame(Math.max(0,currentFrame-1))};$('nextFrame').onclick=()=>{saveFrame();renderFrame(Math.min(project().frames.length-1,currentFrame+1))};$('duplicateFrame').onclick=()=>addFrame(true);$('deleteFrame').onclick=removeFrame;
   const menuActions={newProject:()=>$('newProjectBtn').click(),importProject:()=>$('importProjectBtn').click(),exportProject:()=>$('exportProjectBtn').click(),exportVideo:()=>$('exportVideoBtn').click(),undo:()=>$('undoBtn').click(),redo:()=>$('redoBtn').click(),duplicateFrame:()=>$('duplicateFrame').click(),deleteFrame:()=>$('deleteFrame').click(),toggleOnion:()=>{$('onionToggle').checked=!$('onionToggle').checked;$('onionToggle').dispatchEvent(new Event('change'))},zoomIn:()=>$('zoomIn').click(),zoomOut:()=>$('zoomOut').click(),fullscreen:()=>$('fullscreenBtn').click(),previousFrame:()=>$('previousFrame').click(),play:()=>$('playBtn').click(),nextFrame:()=>$('nextFrame').click()};
   document.querySelectorAll('[data-menu-action]').forEach(button=>button.addEventListener('click',()=>{menuActions[button.dataset.menuAction]();button.closest('details').open=false}));

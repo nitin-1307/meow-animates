@@ -4,6 +4,8 @@ Meow Animates is a browser-based frame-by-frame 2D animation studio. It is a sta
 
 Animation & tweens settings preview on the current stage frame as you adjust them. The preview clears when you draw or switch frames; playback and video export render the animation across the configured frame range.
 
+Project and video exports offer a free download with a “Made with Meow Animates” watermark. The listed watermark-free plans are ₹100 for 1 month, ₹80/month for 3 months, ₹75/month for 5 months, ₹50/month for 12 months, or ₹1,000 lifetime. Payment processing and verification are not integrated yet; choosing a paid plan does not charge or unlock watermark-free exports.
+
 ## Run locally
 
 Serve this folder over HTTP rather than opening `index.html` as a `file://` URL. For example:
