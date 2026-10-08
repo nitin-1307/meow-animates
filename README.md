@@ -2,6 +2,8 @@
 
 Meow Animates is a browser-based frame-by-frame 2D animation studio. It is a static site built with HTML, CSS, and JavaScript.
 
+Animation & tweens settings preview on the current stage frame as you adjust them. The preview clears when you draw or switch frames; playback and video export render the animation across the configured frame range.
+
 ## Run locally
 
 Serve this folder over HTTP rather than opening `index.html` as a `file://` URL. For example:
